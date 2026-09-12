@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Solar Fleet Operations &amp; Monitoring Dashboard</title>
-  <link rel="stylesheet" href="./css/style.css?v=3">
+  <title>ระบบบริหารจัดการและติดตามผลโซลาร์ฟลีต (Solar Fleet Operations &amp; Monitoring Dashboard)</title>
+  <link rel="stylesheet" href="./css/style.css?v=6">
   <style>
     .panel-title-group { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .view-toggle-group { display: inline-flex; background: #e2e8f0; border-radius: 8px; padding: 4px; gap: 4px; }
@@ -36,6 +36,9 @@
 </head>
 <body>
   <div class="app">
+    <!-- Backdrop for mobile drawer -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
@@ -43,107 +46,134 @@
       </div>
       <nav class="sidebar-nav">
         <a href="#" class="nav-item active" data-view="fleet">
-          <span class="nav-icon">&#9638;</span> Fleet Overview
+          <span class="nav-icon">&#9638;</span> ภาพรวมระบบ (Fleet Overview)
         </a>
         <a href="#" class="nav-item" data-view="deepdive">
-          <span class="nav-icon">&#9758;</span> Deep-Dive
+          <span class="nav-icon">&#9758;</span> วิเคราะห์รายไซต์ (Site Deep-Dive)
         </a>
         <a href="#" class="nav-item" data-view="analytics">
-          <span class="nav-icon">&#9636;</span> Analytics
+          <span class="nav-icon">&#9636;</span> สถิติและแนวโน้ม (Fleet Analytics)
         </a>
         <a href="#" class="nav-item" data-view="settings">
-          <span class="nav-icon">&#9881;</span> Settings
+          <span class="nav-icon">&#9881;</span> ตั้งค่าระบบ (Settings)
         </a>
       </nav>
       <div class="sidebar-footer">
-        <p>App running on <span class="mono">0.0.0.0:8000</span>.</p>
-        <p class="muted">All assets are referred to by relative paths.</p>
+        <p>ระบบทำงานที่ <span class="mono">0.0.0.0:8000</span></p>
+        <p class="muted">อ้างอิงไฟล์ทั้งหมดด้วย Relative Path</p>
       </div>
     </aside>
 
     <!-- Main -->
     <div class="main">
       <header class="topbar">
-        <button class="icon-btn" id="menuToggle" title="Toggle menu">&#9776;</button>
-        <div class="topbar-title" id="topbarTitle">G1 Group (Pathum Thani District)</div>
+        <button class="icon-btn" id="menuToggle" title="เปิด/ปิดเมนู">&#9776;</button>
+        <div class="topbar-title" id="topbarTitle">กลุ่ม G1 (เขตปทุมธานี)</div>
         <div class="topbar-right">
           <button class="btn-sync-now" id="btnSyncNow" onclick="manualSync()" title="ซิงค์ข้อมูลกับเซิร์ฟเวอร์">
-            <span class="sync-icon" id="syncIcon">&#8635;</span> <span id="syncBtnText">Sync Data</span>
+            <span class="sync-icon" id="syncIcon">&#8635;</span> <span id="syncBtnText">ซิงค์ข้อมูล</span>
           </button>
-          <span class="sync-status-badge" id="syncBadge">Local Ready</span>
-          <button class="icon-btn" id="btnRefreshTop" title="Refresh">&#8635;</button>
-          <span class="user-chip"><span class="avatar">&#128100;</span> Phornnatee(ป่าน)</span>
-          <span class="online-badge" id="connectionBadge">ONLINE</span>
+          <span class="sync-status-badge" id="syncBadge">พร้อมใช้งาน</span>
+          <button class="icon-btn" id="btnRefreshTop" title="รีเฟรชข้อมูล">&#8635;</button>
+          <span class="user-chip"><span class="avatar">&#128100;</span> <span id="usernameText">Phornnatee(ป่าน)</span></span>
+          <span class="online-badge" id="connectionBadge">ออนไลน์</span>
         </div>
       </header>
 
       <main class="content">
         <!-- Fleet Overview -->
         <section id="view-fleet" class="view">
-          <h1 class="view-title">Fleet Overview (<span id="fleetSiteCount">10</span> Sites)</h1>
+          <h1 class="view-title">ภาพรวมระบบโซลาร์ (<span id="fleetSiteCount">10</span> ไซต์)</h1>
 
           <!-- Quick Tariff & Settings Toolbar -->
           <div class="fleet-quick-toolbar">
             <div class="tariff-control">
               <span class="tariff-badge-icon">⚡</span>
-              <label for="inputFeedInTariff" class="tariff-title">เรทส่งคืนการไฟฟ้า (Feed-in Tariff):</label>
+              <label for="inputFeedInTariff" class="tariff-title">เรทขายไฟ / ส่งคืนการไฟฟ้า (Selling / Feed-in Tariff):</label>
               <div class="tariff-input-group">
                 <input type="number" id="inputFeedInTariff" step="0.05" min="0" max="50" value="2.20" class="tariff-num-input" />
-                <span class="tariff-unit-label">THB / kWh</span>
+                <span class="tariff-unit-label">บาท / หน่วย (THB/kWh)</span>
               </div>
               <button class="btn btn-sm btn-primary" id="btnSaveTariff" onclick="saveFeedInTariff()">บันทึกเรท</button>
               <span id="tariffSaveMsg" class="tariff-saved-msg hidden">&#10003; บันทึกสำเร็จ</span>
             </div>
             <div class="toolbar-actions">
               <button class="btn btn-sm btn-outline" id="btnOpenCleaningModal" onclick="openCleaningModal()">
-                ⚙️ ตั้งค่าค่าล้าง 10 ไซต์ (Site Cleaning Costs)
+                ⚙️ กำหนดค่าบริการล้างแผง 10 ไซต์ (Site Cleaning Costs)
               </button>
             </div>
           </div>
 
-          <div class="metric-cards">
+          <!-- Energy & Generation Cards -->
+          <div class="metric-cards metric-grid-tech">
             <div class="metric-card card-capacity">
               <div class="metric-icon">&#9728;</div>
               <div>
-                <div class="metric-label">Total Capacity</div>
+                <div class="metric-label">กำลังผลิตติดตั้งรวม</div>
                 <div class="metric-value" id="mCapacity">&mdash; MWp</div>
               </div>
             </div>
             <div class="metric-card card-yield">
               <div class="metric-icon">&#9889;</div>
               <div>
-                <div class="metric-label">Today's Total Yield</div>
+                <div class="metric-label">พลังงานที่ผลิตได้วันนี้</div>
                 <div class="metric-value" id="mYield">&mdash; MWh</div>
               </div>
             </div>
             <div class="metric-card card-consumed">
               <div class="metric-icon">&#9879;</div>
               <div>
-                <div class="metric-label">Today's Self-Consumption</div>
+                <div class="metric-label">พลังงานที่ลูกค้าใช้</div>
                 <div class="metric-value" id="mConsumed">&mdash; MWh</div>
               </div>
             </div>
             <div class="metric-card card-exported">
               <div class="metric-icon">&#8635;</div>
               <div>
-                <div class="metric-label">Total Exported (Teal)</div>
+                <div class="metric-label">พลังงานส่งออกสายส่ง</div>
                 <div class="metric-value" id="mExported">&mdash; MWh</div>
               </div>
             </div>
+          </div>
+
+          <!-- Financial & Commercial Performance Cards -->
+          <div class="metric-cards metric-grid-financial">
+            <!-- Card: จำนวนเงินที่ขายได้ (Revenue from Solar Sold) with Period Dropdown -->
             <div class="metric-card card-finvalue">
               <div class="metric-icon">&#128176;</div>
-              <div>
-                <div class="metric-label">Today's Financial Value</div>
-                <div class="metric-value" id="mFinValue">&mdash; THB</div>
-                <div class="metric-sub" id="mFinValueSub">(self-consumption &times; 4.50 + exported &times; 2.20)</div>
+              <div class="metric-card-body">
+                <div class="metric-header-row">
+                  <div class="metric-label">จำนวนเงินที่ขายได้</div>
+                  <select id="revenuePeriodSelect" class="card-period-select" onchange="switchFinancialPeriod(this.value)">
+                    <option value="today" selected>เฉพาะวันนี้</option>
+                    <option value="week">สัปดาห์นี้ (7 วัน)</option>
+                    <option value="month">เดือนนี้ (30 วัน)</option>
+                    <option value="year">ปีนี้ (12 เดือน)</option>
+                  </select>
+                </div>
+                <div class="metric-value" id="mRevenueSold">&mdash; THB</div>
+                <div class="metric-sub" id="mRevenueSoldSub">&mdash;</div>
               </div>
             </div>
+            <!-- Card: เงินที่ประหยัดไปได้ (Client Savings) -->
+            <div class="metric-card card-savings">
+              <div class="metric-icon">&#128161;</div>
+              <div class="metric-card-body">
+                <div class="metric-header-row">
+                  <div class="metric-label">เงินที่ลูกค้าประหยัดได้</div>
+                  <span class="period-badge-tag" id="savingsPeriodTag">เฉพาะวันนี้</span>
+                </div>
+                <div class="metric-value" id="mClientSavings">&mdash; THB</div>
+                <div class="metric-sub" id="mClientSavingsSub">&mdash;</div>
+              </div>
+            </div>
+            <!-- Card: Estimated Revenue Lost Today -->
             <div class="metric-card card-finlost">
               <div class="metric-icon">&#9888;</div>
               <div>
-                <div class="metric-label">Estimated Revenue Lost Today</div>
+                <div class="metric-label">รายได้ที่สูญเสียจากฝุ่นวันนี้</div>
                 <div class="metric-value" id="mRevLost">&mdash; THB</div>
-                <div class="metric-sub" id="mRevLostSub">(Real-time sensor estimation &amp; 4.5 PSH at 2.20 THB/kWh)</div>
+                <div class="metric-sub" id="mRevLostSub">(ประมาณการเซนเซอร์ Real-time &amp; 4.5 PSH ที่ 2.20 บาท/หน่วย)</div>
               </div>
             </div>
           </div>
@@ -151,65 +181,66 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title-group">
-                <h2 id="fleetTableTitle">Real-time Fleet Status</h2>
+                <h2 id="fleetTableTitle">สถานะระบบ Real-time ทุกไซต์</h2>
                 <div class="view-toggle-group">
-                  <button class="btn-toggle active" id="btnViewLive" data-mode="live" onclick="switchFleetView('live')">&#9889; Real-time Telemetry</button>
-                  <button class="btn-toggle" id="btnViewDailyHistory" data-mode="daily" onclick="switchFleetView('daily')">&#128197; Daily History (ดูข้อมูลรายวัน)</button>
-                  <button class="btn-toggle" id="btnViewMonthlyHistory" data-mode="monthly" onclick="switchFleetView('monthly')">&#128202; Monthly History (ดูข้อมูลรายเดือน)</button>
+                  <button class="btn-toggle active" id="btnViewLive" data-mode="live" onclick="switchFleetView('live')">&#9889; ข้อมูล Real-time</button>
+                  <button class="btn-toggle" id="btnViewDailyHistory" data-mode="daily" onclick="switchFleetView('daily')">&#128197; ประวัติรายวัน (Daily History)</button>
+                  <button class="btn-toggle" id="btnViewMonthlyHistory" data-mode="monthly" onclick="switchFleetView('monthly')">&#128202; ประวัติรายเดือน (Monthly History)</button>
                 </div>
               </div>
               <div class="refresh-controls" id="liveControls">
                 <label class="auto-toggle">
-                  <input type="checkbox" id="autoRefresh" checked> Auto-refresh (<span id="refreshIntervalLabel">30s</span>)
+                  <input type="checkbox" id="autoRefresh" checked> รีเฟรชอัตโนมัติ (<span id="refreshIntervalLabel">30 วินาที</span>)
                 </label>
                 <select id="refreshInterval" class="small-select">
-                  <option value="10">10s</option>
-                  <option value="30" selected>30s</option>
-                  <option value="60">60s</option>
+                  <option value="10">10 วินาที</option>
+                  <option value="30" selected>30 วินาที</option>
+                  <option value="60">60 วินาที</option>
                 </select>
-                <button class="btn btn-primary" id="btnRefresh">&#8635; Refresh Now</button>
-                <span class="last-updated" id="lastUpdated">Last updated: &mdash;</span>
+                <button class="btn btn-primary" id="btnRefresh">&#8635; รีเฟรชทันที</button>
+                <span class="last-updated" id="lastUpdated">อัปเดตล่าสุด: &mdash;</span>
               </div>
               <div class="history-controls hidden" id="historyControls">
-                <label for="historySiteFilter" class="field-label-inline">&#128205; Site:</label>
+                <label for="historySiteFilter" class="field-label-inline">&#128205; ไซต์:</label>
                 <select id="historySiteFilter" class="small-select">
-                  <option value="">All Sites (ทุกไซต์ใน Fleet)</option>
+                  <option value="SOLAR-BKK-01" selected>SOLAR-BKK-01 &mdash; Bangkok Urban Factory Rooftop</option>
+                  <option value="">ทุกไซต์ใน Fleet (All Sites)</option>
                 </select>
                 <span id="dailyRangeWrap">
-                  <label for="historyDaysSelect" class="field-label-inline">&#128197; Range:</label>
+                  <label for="historyDaysSelect" class="field-label-inline">&#128197; ช่วงเวลา:</label>
                   <select id="historyDaysSelect" class="small-select">
-                    <option value="1">Yesterday (1 Day)</option>
-                    <option value="7" selected>Last 7 Days</option>
-                    <option value="14">Last 14 Days</option>
-                    <option value="30">Last 30 Days</option>
+                    <option value="1">เมื่อวาน (1 วัน)</option>
+                    <option value="7" selected>7 วันล่าสุด</option>
+                    <option value="14">14 วันล่าสุด</option>
+                    <option value="30">30 วันล่าสุด</option>
                   </select>
                 </span>
                 <span id="monthlyRangeWrap" class="hidden">
-                  <label for="historyMonthsSelect" class="field-label-inline">&#128202; Range:</label>
+                  <label for="historyMonthsSelect" class="field-label-inline">&#128202; ช่วงเวลา:</label>
                   <select id="historyMonthsSelect" class="small-select">
-                    <option value="3">Last 3 Months</option>
-                    <option value="6">Last 6 Months</option>
-                    <option value="12" selected>Last 12 Months</option>
+                    <option value="3">3 เดือนล่าสุด</option>
+                    <option value="6">6 เดือนล่าสุด</option>
+                    <option value="12" selected>12 เดือนล่าสุด</option>
                   </select>
                 </span>
-                <button class="btn btn-primary" id="btnRefreshHistory">&#8635; Load</button>
-                <span class="last-updated" id="historyLastUpdated">Historical baseline</span>
+                <button class="btn btn-primary" id="btnRefreshHistory">&#8635; ดึงข้อมูล</button>
+                <span class="last-updated" id="historyLastUpdated">ข้อมูลประวัติระบบ</span>
               </div>
             </div>
             <div class="table-wrap" id="liveTableWrap">
               <table class="fleet-table">
                 <thead>
                   <tr>
-                    <th>Site ID</th>
-                    <th>Site Name</th>
-                    <th>Irradiance (W/m&sup2;)</th>
-                    <th>PV Power (kW)</th>
-                    <th>Load Power (kW)</th>
-                    <th>Flow Status</th>
-                    <th>Today Yield (kWh)</th>
-                    <th>Consumed (kWh)</th>
-                    <th>Sun Hours (h)</th>
-                    <th>Estimated Soiling Loss (%)</th>
+                    <th>รหัสไซต์ (Site ID)</th>
+                    <th>ชื่อไซต์ (Site Name)</th>
+                    <th>ความเข้มแสง (W/m&sup2;)</th>
+                    <th>กำลังผลิต PV (kW)</th>
+                    <th>โหลดที่ใช้ (kW)</th>
+                    <th>ทิศทางพลังงาน</th>
+                    <th>ผลิตได้วันนี้ (kWh)</th>
+                    <th>ลูกค้าใช้ไป (kWh)</th>
+                    <th>ชั่วโมงแดด (ชม.)</th>
+                    <th>การสูญเสียจากฝุ่น (%)</th>
                   </tr>
                 </thead>
                 <tbody id="fleetTableBody"></tbody>
@@ -219,16 +250,16 @@
               <table class="fleet-table history-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Site ID</th>
-                    <th>Site Name</th>
-                    <th>Weather</th>
-                    <th>Avg Irradiance</th>
-                    <th>Sun Hours (h)</th>
-                    <th>Expected Yield (kWh)</th>
-                    <th>Actual Yield (kWh)</th>
-                    <th>Estimated Soiling Loss (%)</th>
-                    <th>Revenue Lost (THB)</th>
+                    <th>วันที่</th>
+                    <th>รหัสไซต์</th>
+                    <th>ชื่อไซต์</th>
+                    <th>สภาพอากาศ</th>
+                    <th>ความเข้มแสงเฉลี่ย</th>
+                    <th>ชั่วโมงแดด (ชม.)</th>
+                    <th>ผลผลิตคาดหวัง (kWh)</th>
+                    <th>ผลผลิตจริง (kWh)</th>
+                    <th>การสูญเสียจากฝุ่น (%)</th>
+                    <th>รายได้ที่สูญเสีย (บาท)</th>
                   </tr>
                 </thead>
                 <tbody id="fleetHistoryTableBody"></tbody>
@@ -238,16 +269,16 @@
               <table class="fleet-table history-table">
                 <thead>
                   <tr>
-                    <th>Month</th>
-                    <th>Site ID</th>
-                    <th>Site Name</th>
-                    <th>Days</th>
-                    <th>Avg Irradiance</th>
-                    <th>Sun Hours (h)</th>
-                    <th>Expected Yield (kWh)</th>
-                    <th>Actual Yield (kWh)</th>
-                    <th>Estimated Soiling Loss (%)</th>
-                    <th>Revenue Lost (THB)</th>
+                    <th>เดือน</th>
+                    <th>รหัสไซต์</th>
+                    <th>ชื่อไซต์</th>
+                    <th>จำนวนวัน</th>
+                    <th>ความเข้มแสงเฉลี่ย</th>
+                    <th>ชั่วโมงแดด (ชม.)</th>
+                    <th>ผลผลิตคาดหวัง (kWh)</th>
+                    <th>ผลผลิตจริง (kWh)</th>
+                    <th>การสูญเสียจากฝุ่น (%)</th>
+                    <th>รายได้ที่สูญเสีย (บาท)</th>
                   </tr>
                 </thead>
                 <tbody id="fleetMonthlyTableBody"></tbody>
@@ -260,36 +291,36 @@
         <!-- Site Deep-Dive -->
         <section id="view-deepdive" class="view hidden">
           <div class="deepdive-header">
-            <h1 class="view-title" id="deepdiveTitle">Site Deep-Dive: &mdash;</h1>
+            <h1 class="view-title" id="deepdiveTitle">วิเคราะห์รายไซต์ (Site Deep-Dive): &mdash;</h1>
             <select id="siteSelect" class="site-select"></select>
           </div>
 
           <div class="tabs">
-            <button class="tab-btn active" data-tab="day">Day Analysis</button>
-            <button class="tab-btn" data-tab="month">Month Trends</button>
+            <button class="tab-btn active" data-tab="day">วิเคราะห์รายวัน (Day Analysis)</button>
+            <button class="tab-btn" data-tab="month">แนวโน้มรายเดือน (Month Trends)</button>
           </div>
 
           <!-- Day tab -->
           <div id="tab-day" class="tab-pane">
             <div class="panel advisor-panel">
               <div class="panel-header">
-                <h2>AI Financial Forecast &amp; Cleaning ROI Advisor</h2>
+                <h2>ระบบ AI พยากรณ์การเงิน &amp; ประเมินความคุ้มค่าการล้างแผง (Cleaning ROI Advisor)</h2>
                 <span class="advisor-badge" id="advisorBadge">&mdash;</span>
               </div>
               <div class="advisor-grid">
                 <div class="advisor-card">
-                  <div class="advisor-label">7-Day Cost of Inaction</div>
+                  <div class="advisor-label">มูลค่าสูญเสียสะสม 7 วัน (หากไม่ล้าง)</div>
                   <div class="advisor-value" id="adv7d">&mdash; THB</div>
                   <div class="advisor-sub" id="adv7dSub">เงินที่จะหายไปใน 7 วันข้างหน้าหากไม่ล้างวันนี้</div>
                 </div>
                 <div class="advisor-card">
-                  <div class="advisor-label">30-Day Cost of Inaction</div>
+                  <div class="advisor-label">มูลค่าสูญเสียสะสม 30 วัน (หากไม่ล้าง)</div>
                   <div class="advisor-value" id="adv30d">&mdash; THB</div>
                   <div class="advisor-sub" id="adv30dSub">เงินที่จะหายไปใน 30 วันข้างหน้าหากไม่ล้างวันนี้</div>
                 </div>
                 <div class="advisor-card" style="position:relative;">
                   <div class="advisor-label" style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>Cleaning Service Cost</span>
+                    <span>ต้นทุนค่าบริการล้างแผง</span>
                     <button class="btn-xs-link" id="btnEditSiteCost" onclick="toggleSiteCleaningEdit()" title="แก้ไขค่าบริการล้างแผงสำหรับไซต์นี้">&#9998; แก้ไข</button>
                   </div>
                   <div class="advisor-value" id="advCost">&mdash; THB</div>
@@ -301,27 +332,27 @@
                   </div>
                 </div>
                 <div class="advisor-card">
-                  <div class="advisor-label" id="advNetLabel">Net Benefit of Cleaning Today</div>
+                  <div class="advisor-label" id="advNetLabel">ผลประโยชน์สุทธิหากล้างวันนี้</div>
                   <div class="advisor-value" id="advNet">&mdash; THB</div>
                   <div class="advisor-sub" id="advNetSub">ผลประโยชน์สุทธิถ้าล้างวันนี้</div>
                 </div>
               </div>
               <div class="advisor-alert advisor-green" id="advisorAlert">
                 <span class="advisor-alert-icon">&#9889;</span>
-                <span id="advisorAlertText">Load a site to generate the AI recommendation.</span>
+                <span id="advisorAlertText">เลือกไซต์เพื่อประมวลผลคำแนะนำจาก AI</span>
               </div>
             </div>
 
             <div class="charts-grid">
               <div class="panel chart-panel">
                 <div class="panel-title-row">
-                  <h2>Real-time Power Flow (kW)</h2>
-                  <span id="powerFlowNightBadge" class="badge badge-night hidden">&#127769; Night-time / Inactive generation</span>
+                  <h2>กำลังไฟฟ้า Real-time (Power Flow - kW)</h2>
+                  <span id="powerFlowNightBadge" class="badge badge-night hidden">&#127769; เวลากลางคืน / ไม่มีการผลิตไฟ</span>
                 </div>
                 <div class="canvas-wrap"><canvas id="powerFlowChart"></canvas></div>
               </div>
               <div class="panel chart-panel">
-                <h2>Cumulative Energy (kWh) &mdash; Last 7 Days</h2>
+                <h2>พลังงานสะสม 7 วันย้อนหลัง (Cumulative Energy - kWh)</h2>
                 <div class="canvas-wrap"><canvas id="cumEnergyChart"></canvas></div>
               </div>
             </div>
@@ -329,43 +360,43 @@
 
             <div class="deepdive-lower">
               <div class="panel metric-stack">
-                <h2>Key Metrics (7-day avg)</h2>
+                <h2>ตัวชี้วัดสำคัญ (เฉลี่ย 7 วัน)</h2>
                 <div class="stack-cards">
                   <div class="stack-card green">
-                    <div class="metric-label">Expected Sun Hours</div>
+                    <div class="metric-label">ชั่วโมงแดดที่คาดหวัง</div>
                     <div class="metric-value" id="ddExpSun">&mdash;</div>
                   </div>
                   <div class="stack-card green">
-                    <div class="metric-label">Actual Sun Hours</div>
+                    <div class="metric-label">ชั่วโมงแดดที่ได้จริง</div>
                     <div class="metric-value" id="ddActSun">&mdash;</div>
                   </div>
                   <div class="stack-card green">
-                    <div class="metric-label">Estimated PR <span class="warn-ico" id="ddPrIcon"></span></div>
+                    <div class="metric-label">ประสิทธิภาพระบบ (PR) <span class="warn-ico" id="ddPrIcon"></span></div>
                     <div class="metric-value" id="ddPR">&mdash;</div>
                   </div>
                   <div class="stack-card amber" id="ddLossCard">
-                    <div class="metric-label">Soiling Loss <span class="warn-ico" id="ddLossIcon"></span></div>
+                    <div class="metric-label">การสูญเสียจากฝุ่น (Soiling Loss) <span class="warn-ico" id="ddLossIcon"></span></div>
                     <div class="metric-value" id="ddLoss">&mdash;</div>
                   </div>
                 </div>
               </div>
 
               <div class="panel soiling-panel">
-                <h2>Smart Soiling &amp; Anomaly Detection</h2>
+                <h2>ระบบตรวจจับคราบฝุ่นและความผิดปกติอัจฉริยะ (Smart Soiling &amp; Anomaly Detection)</h2>
                 <div class="gauge-wrap">
                   <canvas id="soilingGauge"></canvas>
                   <div class="gauge-center">
                     <div class="gauge-value" id="gaugeValue">&mdash;</div>
-                    <div class="gauge-status" id="gaugeStatus">Status</div>
+                    <div class="gauge-status" id="gaugeStatus">สถานะ</div>
                   </div>
                 </div>
                 <div class="soiling-meta">
                   <div>
-                    <strong>Status:</strong>
+                    <strong>สถานะ:</strong>
                     <span class="status-chip" id="ddStatusChip">&mdash;</span>
                   </div>
-                  <div><strong>ROI for Cleaning:</strong> <span id="ddROI">&mdash;</span></div>
-                  <div><strong id="ddOpportunityLossLabel">Opportunity Loss if delayed:</strong> <span id="ddEnergyLost">&mdash;</span></div>
+                  <div><strong>ความคุ้มค่าการล้างแผง (ROI):</strong> <span id="ddROI">&mdash;</span></div>
+                  <div><strong id="ddOpportunityLossLabel">มูลค่าสูญเสียหากชะลอการล้าง:</strong> <span id="ddEnergyLost">&mdash;</span></div>
                   <div class="advice" id="ddAdvice">&mdash;</div>
                 </div>
               </div>
@@ -374,30 +405,30 @@
             <div class="panel" style="margin-top:20px;">
               <div class="panel-header">
                 <div class="panel-title-group">
-                  <h2>Site Daily Breakdown (ประวัติรายวันของไซต์นี้)</h2>
+                  <h2>ประวัติรายวันของไซต์นี้ (Site Daily Breakdown)</h2>
                 </div>
                 <div class="history-controls">
-                  <label class="field-label-inline">&#128197; Range:</label>
+                  <label class="field-label-inline">&#128197; ช่วงเวลา:</label>
                   <select id="ddDailyDaysSelect" class="small-select">
-                    <option value="7" selected>Last 7 Days</option>
-                    <option value="14">Last 14 Days</option>
-                    <option value="30">Last 30 Days</option>
+                    <option value="7" selected>7 วันล่าสุด</option>
+                    <option value="14">14 วันล่าสุด</option>
+                    <option value="30">30 วันล่าสุด</option>
                   </select>
-                  <button class="btn btn-primary" id="btnRefreshDdDaily" onclick="refreshCurrentSiteDaily()">&#8635; Load</button>
+                  <button class="btn btn-primary" id="btnRefreshDdDaily" onclick="refreshCurrentSiteDaily()">&#8635; ดึงข้อมูล</button>
                 </div>
               </div>
               <div class="table-wrap">
                 <table class="fleet-table">
                   <thead>
                     <tr>
-                      <th>Date</th>
-                      <th>Weather</th>
-                      <th>Avg Irradiance</th>
-                      <th>Sun Hours (h)</th>
-                      <th>Expected Yield (kWh)</th>
-                      <th>Actual Yield (kWh)</th>
-                      <th>Estimated Soiling Loss (%)</th>
-                      <th>Revenue Lost (THB)</th>
+                      <th>วันที่</th>
+                      <th>สภาพอากาศ</th>
+                      <th>ความเข้มแสงเฉลี่ย</th>
+                      <th>ชั่วโมงแดด (ชม.)</th>
+                      <th>ผลผลิตคาดหวัง (kWh)</th>
+                      <th>ผลผลิตจริง (kWh)</th>
+                      <th>การสูญเสียจากฝุ่น (%)</th>
+                      <th>รายได้ที่สูญเสีย (บาท)</th>
                     </tr>
                   </thead>
                   <tbody id="ddDailyTableBody"></tbody>
@@ -409,37 +440,37 @@
           <!-- Month tab -->
           <div id="tab-month" class="tab-pane hidden">
             <div class="panel chart-panel">
-              <h2>Monthly Production Trend &mdash; Last 12 Months (Expected vs Actual Yield)</h2>
+              <h2>แนวโน้มการผลิตไฟฟ้ารายเดือน &mdash; 12 เดือนล่าสุด (ผลผลิตคาดหวัง เทียบกับ ผลิตได้จริง)</h2>
               <div class="canvas-wrap tall"><canvas id="monthlyChart"></canvas></div>
             </div>
 
             <div class="panel" style="margin-top:20px;">
               <div class="panel-header">
                 <div class="panel-title-group">
-                  <h2>Site Monthly Breakdown (ประวัติรายเดือนของไซต์นี้)</h2>
+                  <h2>ประวัติรายเดือนของไซต์นี้ (Site Monthly Breakdown)</h2>
                 </div>
                 <div class="history-controls">
-                  <label class="field-label-inline">&#128202; Range:</label>
+                  <label class="field-label-inline">&#128202; ช่วงเวลา:</label>
                   <select id="ddMonthlyMonthsSelect" class="small-select">
-                    <option value="3">Last 3 Months</option>
-                    <option value="6">Last 6 Months</option>
-                    <option value="12" selected>Last 12 Months</option>
+                    <option value="3">3 เดือนล่าสุด</option>
+                    <option value="6">6 เดือนล่าสุด</option>
+                    <option value="12" selected>12 เดือนล่าสุด</option>
                   </select>
-                  <button class="btn btn-primary" id="btnRefreshDdMonthly" onclick="refreshCurrentSiteMonthly()">&#8635; Load</button>
+                  <button class="btn btn-primary" id="btnRefreshDdMonthly" onclick="refreshCurrentSiteMonthly()">&#8635; ดึงข้อมูล</button>
                 </div>
               </div>
               <div class="table-wrap">
                 <table class="fleet-table">
                   <thead>
                     <tr>
-                      <th>Month</th>
-                      <th>Days Recorded</th>
-                      <th>Avg Irradiance</th>
-                      <th>Sun Hours (h)</th>
-                      <th>Expected Yield (kWh)</th>
-                      <th>Actual Yield (kWh)</th>
-                      <th>Estimated Soiling Loss (%)</th>
-                      <th>Revenue Lost (THB)</th>
+                      <th>เดือน</th>
+                      <th>จำนวนวันที่บันทึก</th>
+                      <th>ความเข้มแสงเฉลี่ย</th>
+                      <th>ชั่วโมงแดด (ชม.)</th>
+                      <th>ผลผลิตคาดหวัง (kWh)</th>
+                      <th>ผลผลิตจริง (kWh)</th>
+                      <th>การสูญเสียจากฝุ่น (%)</th>
+                      <th>รายได้ที่สูญเสีย (บาท)</th>
                     </tr>
                   </thead>
                   <tbody id="ddMonthlyTableBody"></tbody>
@@ -451,22 +482,22 @@
 
         <!-- Analytics (fleet monthly) -->
         <section id="view-analytics" class="view hidden">
-          <h1 class="view-title">Fleet Analytics &mdash; Monthly Trends</h1>
+          <h1 class="view-title">สถิติภาพรวม Fleet &mdash; แนวโน้มรายเดือน (Fleet Analytics)</h1>
           <div class="panel chart-panel">
-            <h2>All Sites &mdash; Expected vs Actual Yield (kWh)</h2>
+            <h2>ทุกไซต์ &mdash; ผลผลิตคาดหวัง เทียบกับ ผลิตได้จริง (Expected vs Actual Yield - kWh)</h2>
             <div class="canvas-wrap tall"><canvas id="fleetMonthlyChart"></canvas></div>
           </div>
         </section>
 
         <!-- Settings -->
         <section id="view-settings" class="view hidden">
-          <h1 class="view-title">Settings</h1>
+          <h1 class="view-title">การตั้งค่าระบบ (Settings)</h1>
           <div class="panel">
-            <h2>System Information</h2>
+            <h2>ข้อมูลระบบ (System Information)</h2>
             <div class="settings-list" id="settingsInfo">
-              <div class="setting-row"><span>Group ID</span><span id="setGroupId">&mdash;</span></div>
-              <div class="setting-row"><span>Solar API Base</span><span id="setApiBase">&mdash;</span></div>
-              <div class="setting-row"><span>Connection</span><span id="setConn">Checking...</span></div>
+              <div class="setting-row"><span>รหัสกลุ่ม (Group ID)</span><span id="setGroupId">&mdash;</span></div>
+              <div class="setting-row"><span>Solar API Base URL</span><span id="setApiBase">&mdash;</span></div>
+              <div class="setting-row"><span>สถานะการเชื่อมต่อ (Connection)</span><span id="setConn">กำลังตรวจสอบ...</span></div>
             </div>
           </div>
         </section>
@@ -489,9 +520,9 @@
           <table class="fleet-table" id="cleaningCostTable">
             <thead>
               <tr>
-                <th>Site ID</th>
-                <th>Site Name &amp; Region</th>
-                <th style="text-align:right;">ค่าบริการล้าง (THB)</th>
+                <th>รหัสไซต์ (Site ID)</th>
+                <th>ชื่อไซต์และพื้นที่ (Site Name &amp; Region)</th>
+                <th style="text-align:right;">ค่าบริการล้าง (บาท)</th>
               </tr>
             </thead>
             <tbody id="cleaningCostTableBody">
@@ -508,7 +539,7 @@
   </div>
 
   <script src="./js/chart.umd.min.js"></script>
-  <script src="./js/dashboard.js?v=2"></script>
+  <script src="./js/dashboard.js?v=6"></script>
   <script>
     function switchFleetView(mode) {
       var isLive = mode === "live";
@@ -556,7 +587,7 @@
       if (monthRange) monthRange.classList.toggle("hidden", !isMonthly);
 
       if (title) {
-        title.textContent = isLive ? "Real-time Fleet Status" : isDaily ? "Fleet Daily History" : "Fleet Monthly History";
+        title.textContent = isLive ? "สถานะระบบ Real-time ทุกไซต์" : isDaily ? "ประวัติรายวันทุกไซต์ (Fleet Daily History)" : "ประวัติรายเดือนทุกไซต์ (Fleet Monthly History)";
       }
 
       if (isDaily && typeof window.loadDailyHistory === "function") {

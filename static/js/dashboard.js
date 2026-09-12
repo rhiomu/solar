@@ -11,6 +11,14 @@ const state = {
   tariffs: { feed_in_tariff: 2.20, grid_import_tariff: 4.50 },
   siteSettings: [],
   syncStatus: { status: "idle", message: "" },
+  financialPeriod: "today",
+  financialData: {
+    today: { yield_kwh: 0, consumed_kwh: 0, exported_kwh: 0 },
+    week: { yield_kwh: 0, consumed_kwh: 0, exported_kwh: 0 },
+    month: { yield_kwh: 0, consumed_kwh: 0, exported_kwh: 0 },
+    year: { yield_kwh: 0, consumed_kwh: 0, exported_kwh: 0 },
+  },
+  financialLoaded: false,
 };
 
 const $ = (sel) => document.querySelector(sel);
@@ -22,15 +30,15 @@ const fmtTHB = (v) => (v == null || isNaN(v) ? "\u2014" : Math.round(v).toLocale
 
 function setOnline(online) {
   const badge = $("#connectionBadge");
-  badge.textContent = online ? "ONLINE" : "OFFLINE";
+  badge.textContent = online ? "ออนไลน์" : "ออฟไลน์";
   badge.classList.toggle("offline", !online);
   const setConn = $("#setConn");
-  if (setConn) setConn.textContent = online ? "Connected" : "Unreachable";
+  if (setConn) setConn.textContent = online ? "เชื่อมต่อสำเร็จ" : "ไม่สามารถเชื่อมต่อได้";
 }
 
 function setLastUpdated() {
   const el = $("#lastUpdated");
-  if (el) el.textContent = "Last updated: " + new Date().toLocaleTimeString();
+  if (el) el.textContent = "อัปเดตล่าสุด: " + new Date().toLocaleTimeString("th-TH");
 }
 
 /* ---------- API (relative paths only) ---------- */
@@ -45,15 +53,130 @@ async function api(path, options) {
 
 /* ---------- Fleet Overview ---------- */
 function soilingBadge(loss) {
-  if (loss < 5) return { cls: "badge-clean", text: "🟢 Normal (< 5%)", row: "" };
-  if (loss < 15) return { cls: "badge-warning", text: "🟡 Warning (" + fmt(loss, 1) + "%)", row: "row-warning" };
-  return { cls: "badge-critical", text: "🔴 Critical (" + fmt(loss, 1) + "%)", row: "row-critical" };
+  if (loss < 5) return { cls: "badge-clean", text: "🟢 ปกติ (< 5%)", row: "" };
+  if (loss < 15) return { cls: "badge-warning", text: "🟡 เฝ้าระวัง (" + fmt(loss, 1) + "%)", row: "row-warning" };
+  return { cls: "badge-critical", text: "🔴 วิกฤต (" + fmt(loss, 1) + "%)", row: "row-critical" };
 }
 
 function flowBadge(flow) {
-  if (flow === "Exported") return '<span class="badge badge-exported">\u26A1 Exported</span>';
-  if (flow === "Balanced") return '<span class="badge badge-balanced">= Balanced</span>';
-  return '<span class="badge badge-imported">\u26A1 Imported</span>';
+  if (flow === "Exported") return '<span class="badge badge-exported">\u26A1 ส่งออก (Exported)</span>';
+  if (flow === "Balanced") return '<span class="badge badge-balanced">= สมดุล (Balanced)</span>';
+  return '<span class="badge badge-imported">\u26A1 นำเข้า (Imported)</span>';
+}
+
+function updateFinancialCards() {
+  const period = state.financialPeriod || "today";
+  const periodData = (state.financialData && state.financialData[period])
+    ? state.financialData[period]
+    : (state.financialData ? state.financialData.today : { yield_kwh: 0, consumed_kwh: 0, exported_kwh: 0 });
+
+  const fit = state.tariffs.feed_in_tariff !== undefined
+    ? Number(state.tariffs.feed_in_tariff)
+    : Number(state.tariffs.feed_in || 2.20);
+  const git = state.tariffs.grid_import_tariff !== undefined
+    ? Number(state.tariffs.grid_import_tariff)
+    : Number(state.tariffs.grid_import || 4.50);
+
+  const yieldKwh = periodData.yield_kwh || 0;
+  const consumedKwh = periodData.consumed_kwh || 0;
+  const exportedKwh = periodData.exported_kwh || 0;
+
+  // 1. จำนวนเงินที่ขายได้ (Solar Revenue):
+  // พลังงานไฟฟ้าทั้งหมดที่ผลิต/ขายได้คูณเรทขายไฟ fit
+  const revenueSold = yieldKwh * fit;
+
+  // 2. เงินที่ประหยัดไปได้ (Client Savings):
+  // พลังงานโซลาร์ที่ลูกค้าดึงไปใช้ (consumedKwh)
+  const netSavings = consumedKwh * Math.max(0.0, git - fit);
+  const grossSavings = consumedKwh * git;
+
+  // Render Box 1: จำนวนเงินที่ขายได้
+  const elRev = $("#mRevenueSold");
+  const elRevSub = $("#mRevenueSoldSub");
+  if (elRev) {
+    elRev.textContent = fmtTHB(Math.round(revenueSold)) + " บาท";
+  }
+  if (elRevSub) {
+    const yieldDisplay = yieldKwh >= 1000
+      ? (yieldKwh / 1000).toFixed(2) + " MWh"
+      : fmtInt(yieldKwh) + " kWh";
+    elRevSub.textContent = "(" + yieldDisplay + " \u00D7 " + fit.toFixed(2) + " บาท/หน่วย)";
+  }
+
+  // Render Box 2: เงินที่ประหยัดไปได้
+  const elSav = $("#mClientSavings");
+  const elSavSub = $("#mClientSavingsSub");
+  const elSavTag = $("#savingsPeriodTag");
+  if (elSav) {
+    const displaySaving = (git > fit && netSavings > 0) ? netSavings : grossSavings;
+    elSav.textContent = fmtTHB(Math.round(displaySaving)) + " บาท";
+  }
+  if (elSavSub) {
+    if (git > fit) {
+      const diff = (git - fit).toFixed(2);
+      elSavSub.textContent = "(ประหยัดส่วนต่าง " + diff + " บาท/หน่วย | เทียบไฟหลวง " + fmtTHB(Math.round(grossSavings)) + " บาท)";
+    } else {
+      elSavSub.textContent = "(มูลค่าเทียบเท่าไฟหลวง " + git.toFixed(2) + " บาท/หน่วย)";
+    }
+  }
+  if (elSavTag) {
+    const periodLabels = {
+      today: "เฉพาะวันนี้",
+      week: "สัปดาห์นี้ (7 วัน)",
+      month: "เดือนนี้ (30 วัน)",
+      year: "ปีนี้ (12 เดือน)",
+    };
+    elSavTag.textContent = periodLabels[period] || "เฉพาะวันนี้";
+  }
+
+  // Ensure select dropdown reflects current selection
+  const sel = $("#revenuePeriodSelect");
+  if (sel && sel.value !== period) {
+    sel.value = period;
+  }
+}
+
+function switchFinancialPeriod(period) {
+  state.financialPeriod = period;
+  updateFinancialCards();
+}
+window.switchFinancialPeriod = switchFinancialPeriod;
+
+async function loadAllFinancialPeriods() {
+  if (state.financialLoaded) return;
+  try {
+    const [hist7, hist30, hist12] = await Promise.all([
+      api("history-daily?days=7"),
+      api("history-daily?days=30"),
+      api("history-monthly?months=12"),
+    ]);
+
+    if (Array.isArray(hist7)) {
+      const y = hist7.reduce((acc, r) => acc + Number(r.actual_yield_kwh || 0), 0);
+      const e = hist7.reduce((acc, r) => acc + Number(r.exported_kwh || 0), 0);
+      const c = Math.max(0, y - e);
+      state.financialData.week = { yield_kwh: y, consumed_kwh: c, exported_kwh: e };
+    }
+
+    if (Array.isArray(hist30)) {
+      const y = hist30.reduce((acc, r) => acc + Number(r.actual_yield_kwh || 0), 0);
+      const e = hist30.reduce((acc, r) => acc + Number(r.exported_kwh || 0), 0);
+      const c = Math.max(0, y - e);
+      state.financialData.month = { yield_kwh: y, consumed_kwh: c, exported_kwh: e };
+    }
+
+    if (Array.isArray(hist12)) {
+      const y = hist12.reduce((acc, r) => acc + Number(r.actual_yield_kwh || 0), 0);
+      const e = hist12.reduce((acc, r) => acc + Number(r.exported_kwh || 0), 0);
+      const c = Math.max(0, y - e);
+      state.financialData.year = { yield_kwh: y, consumed_kwh: c, exported_kwh: e };
+    }
+
+    state.financialLoaded = true;
+    updateFinancialCards();
+  } catch (err) {
+    console.warn("Could not pre-aggregate historical financial periods:", err.message);
+  }
 }
 
 function renderFleet(data) {
@@ -62,12 +185,21 @@ function renderFleet(data) {
   $("#mYield").textContent = fmt(s.total_yield_mwh || 0, 2) + " MWh";
   $("#mConsumed").textContent = fmt(s.total_consumed_mwh || 0, 2) + " MWh";
   $("#mExported").textContent = fmt(s.total_exported_mwh || 0, 2) + " MWh";
-  const finValue = Math.max(0, s.today_financial_value_thb || 0);
-  $("#mFinValue").textContent = fmtTHB(finValue) + " THB";
+
   const lostVal = Math.max(0, s.today_revenue_lost_thb || 0);
-  $("#mRevLost").textContent = fmtTHB(lostVal) + " THB";
+  $("#mRevLost").textContent = fmtTHB(lostVal) + " บาท";
   $("#mRevLost").classList.toggle("is-zero", lostVal <= 0);
   $("#fleetSiteCount").textContent = s.sites_count || (data.sites ? data.sites.length : 0);
+
+  // Update today's energy in financialData
+  const todayYieldKwh = (s.total_yield_mwh || 0) * 1000;
+  const todayConsumedKwh = (s.total_consumed_mwh || 0) * 1000;
+  const todayExportedKwh = (s.total_exported_mwh || 0) * 1000;
+  state.financialData.today = {
+    yield_kwh: todayYieldKwh,
+    consumed_kwh: todayConsumedKwh,
+    exported_kwh: todayExportedKwh,
+  };
 
   if (data.tariffs) {
     state.tariffs = data.tariffs;
@@ -78,8 +210,16 @@ function renderFleet(data) {
     }
     const revLostSub = $("#mRevLostSub");
     if (revLostSub && !isNaN(Number(fit))) {
-      revLostSub.textContent = "(Real-time sensor estimation & 4.5 PSH at " + Number(fit).toFixed(2) + " THB/kWh)";
+      revLostSub.textContent = "(ประมาณการเซนเซอร์ Real-time & 4.5 PSH ที่ " + Number(fit).toFixed(2) + " บาท/หน่วย)";
     }
+  }
+
+  // Update financial cards (Revenue Sold & Client Savings)
+  updateFinancialCards();
+
+  // Load week, month, year data in background if not yet loaded
+  if (!state.financialLoaded) {
+    loadAllFinancialPeriods();
   }
 
   if (data.sync) {
@@ -94,8 +234,8 @@ function renderFleet(data) {
     const dailyLoss = site.daily_loss_thb || 0;
     const badge = soilingBadge(loss);
     const lossDisplay = (loss < 5 || dailyLoss <= 0)
-      ? "(0 THB/day)"
-      : "(\u2212" + fmtInt(dailyLoss) + " THB/day)";
+      ? "(0 บาท/วัน)"
+      : "(\u2212" + fmtInt(dailyLoss) + " บาท/วัน)";
 
     const tr = document.createElement("tr");
     tr.className = badge.row;
@@ -108,7 +248,7 @@ function renderFleet(data) {
       "<td>" + flowBadge(site.flow_status) + "</td>" +
       "<td>" + fmtInt(act) + "</td>" +
       "<td>" + fmtInt(site.consumed_kwh) + "</td>" +
-      "<td>" + fmt(site.sun_hours_h, 2) + " h</td>" +
+      "<td>" + fmt(site.sun_hours_h, 2) + " ชม.</td>" +
       '<td><span class="badge ' + badge.cls + '">' + badge.text + "</span> " +
       '<span class="daily-loss">' + lossDisplay + "</span></td>";
     tr.addEventListener("click", () => openDeepDive(site.site_id));
@@ -157,13 +297,12 @@ function renderPowerFlowChart(tel) {
   }
 
   state.charts.power = new Chart(ctx, {
-
     type: "bar",
     data: {
-      labels: ["PV Generation", "Load Demand", "Net " + (exported ? "Export" : "Import")],
+      labels: ["กำลังผลิต PV", "โหลดที่ใช้", exported ? "ส่งออกสุทธิ" : "นำเข้าสุทธิ"],
       datasets: [
         {
-          label: "Power (kW)",
+          label: "กำลังไฟฟ้า (kW)",
           data: [pv, load, net],
           backgroundColor: [
             "rgba(34,197,94,0.85)",
@@ -178,7 +317,7 @@ function renderPowerFlowChart(tel) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: "Power (kW)" } } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: "กำลังไฟฟ้า (kW)" } } },
     },
   });
 }
@@ -202,7 +341,7 @@ function renderCumEnergyChart(daily) {
       labels,
       datasets: [
         {
-          label: "Expected Yield (kWh)",
+          label: "ผลผลิตคาดหวัง (kWh)",
           data: expCum,
           borderColor: "#9ca3af",
           backgroundColor: "rgba(156,163,175,0.15)",
@@ -211,7 +350,7 @@ function renderCumEnergyChart(daily) {
           pointRadius: 3,
         },
         {
-          label: "Actual Yield (kWh)",
+          label: "ผลผลิตจริง (kWh)",
           data: actCum,
           borderColor: "#2563eb",
           backgroundColor: "rgba(37,99,235,0.18)",
@@ -225,7 +364,7 @@ function renderCumEnergyChart(daily) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { position: "top" } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: "Cumulative kWh" } } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: "พลังงานสะสม (kWh)" } } },
     },
   });
 }
@@ -240,13 +379,13 @@ function renderMonthlyChart(monthly) {
       labels,
       datasets: [
         {
-          label: "Expected (kWh)",
+          label: "ผลผลิตคาดหวัง (kWh)",
           data: monthly.map((m) => +m.expected_yield_kwh.toFixed(0)),
           backgroundColor: "rgba(156,163,175,0.55)",
           borderRadius: 4,
         },
         {
-          label: "Actual (kWh)",
+          label: "ผลผลิตจริง (kWh)",
           data: monthly.map((m) => +m.actual_yield_kwh.toFixed(0)),
           backgroundColor: "rgba(34,197,94,0.8)",
           borderRadius: 4,
@@ -257,7 +396,7 @@ function renderMonthlyChart(monthly) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { position: "top" } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: "Energy (kWh)" } } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: "พลังงาน (kWh)" } } },
     },
   });
 }
@@ -278,13 +417,13 @@ function renderFleetMonthlyChart(monthly) {
       labels: months,
       datasets: [
         {
-          label: "Expected (kWh)",
+          label: "ผลผลิตคาดหวัง (kWh)",
           data: months.map((m) => +byMonth[m].exp.toFixed(0)),
           backgroundColor: "rgba(156,163,175,0.55)",
           borderRadius: 4,
         },
         {
-          label: "Actual (kWh)",
+          label: "ผลผลิตจริง (kWh)",
           data: months.map((m) => +byMonth[m].act.toFixed(0)),
           backgroundColor: "rgba(37,99,235,0.8)",
           borderRadius: 4,
@@ -295,7 +434,7 @@ function renderFleetMonthlyChart(monthly) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: { legend: { position: "top" } },
-      scales: { y: { beginAtZero: true, title: { display: true, text: "Fleet Energy (kWh)" } } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: "พลังงานรวมทั้ง Fleet (kWh)" } } },
     },
   });
 }
@@ -345,20 +484,20 @@ function renderAdvisor(fin) {
   const cleaningCost = Number(fin.cleaning_cost_thb || 15000);
   const netBenefit = loss30d - cleaningCost;
 
-  $("#adv7d").textContent = fmtTHB(loss7d) + " THB";
-  $("#adv30d").textContent = fmtTHB(loss30d) + " THB";
-  $("#advCost").textContent = fmtTHB(cleaningCost) + " THB";
+  $("#adv7d").textContent = fmtTHB(loss7d) + " บาท";
+  $("#adv30d").textContent = fmtTHB(loss30d) + " บาท";
+  $("#advCost").textContent = fmtTHB(cleaningCost) + " บาท";
   const inpSiteCost = $("#inputSiteCleaningCost");
   if (inpSiteCost) inpSiteCost.value = Math.round(cleaningCost);
 
   const advNet = $("#advNet");
   const advNetSub = $("#advNetSub");
   if (netBenefit > 0) {
-    advNet.textContent = "+" + fmtTHB(netBenefit) + " THB";
+    advNet.textContent = "+" + fmtTHB(netBenefit) + " บาท";
     advNet.style.color = "#16a34a"; // green
     if (advNetSub) advNetSub.textContent = "ประหยัดเงินได้สุทธิใน 30 วันเมื่อสั่งล้างทันที";
   } else {
-    advNet.textContent = (netBenefit === 0 ? "0" : "\u2212" + fmtTHB(Math.abs(netBenefit))) + " THB";
+    advNet.textContent = (netBenefit === 0 ? "0" : "\u2212" + fmtTHB(Math.abs(netBenefit))) + " บาท";
     advNet.style.color = "#6b7280"; // neutral/muted
     if (advNetSub) advNetSub.textContent = "ยังไม่คุ้มทุนที่จะล้าง (ต้นทุนค่าล้างสูงกว่ารายได้ที่จะเสีย)";
   }
@@ -372,7 +511,7 @@ function renderAdvisor(fin) {
 
   const color = rec.color || (netBenefit > 0 ? "red" : "green");
   const badge = $("#advisorBadge");
-  badge.textContent = rec.badge_text || (netBenefit > 0 ? "⚠️ ACTION REQUIRED" : "ℹ️ MONITORING");
+  badge.textContent = rec.badge_text || (netBenefit > 0 ? "⚠️ สั่งล้างทันที" : "ℹ️ เฝ้าระวังต่อเนื่อง");
   badge.className = "advisor-badge " + color;
 
   const alert = $("#advisorAlert");
@@ -392,14 +531,14 @@ async function loadDeepDive(siteId) {
     const d = await api("deepdive/" + siteId);
     const site = state.sites.find((s) => s.site_id === siteId) || {};
     $("#deepdiveTitle").textContent =
-      "Site Deep-Dive: " + siteId + " (" + (site.site_name || (d.telemetry && d.telemetry.site_name) || siteId) + ")";
+      "วิเคราะห์รายไซต์ (Site Deep-Dive): " + siteId + " (" + (site.site_name || (d.telemetry && d.telemetry.site_name) || siteId) + ")";
 
     renderPowerFlowChart(d.telemetry || {});
     renderCumEnergyChart(d.daily || []);
     renderMonthlyChart(d.monthly || []);
 
-    $("#ddExpSun").textContent = fmt(d.avg_expected_sun_hours, 2) + " h";
-    $("#ddActSun").textContent = fmt(d.avg_actual_sun_hours, 2) + " h";
+    $("#ddExpSun").textContent = fmt(d.avg_expected_sun_hours, 2) + " ชม.";
+    $("#ddActSun").textContent = fmt(d.avg_actual_sun_hours, 2) + " ชม.";
     $("#ddPR").textContent = fmt(d.pr_pct, 1) + "%";
     $("#ddPrIcon").textContent = d.pr_pct < 95 ? "\u26A0" : "";
     
@@ -420,8 +559,8 @@ async function loadDeepDive(siteId) {
 
     $("#ddEnergyLost").textContent =
       weeklyLossThb > 0
-        ? "\u2248 " + fmtTHB(weeklyLossThb) + " THB / week (มูลค่าที่กำลังจะเสียไปต่อสัปดาห์หากชะลอการล้าง)"
-        : "0 THB / week (แผงสะอาด ไม่มีมูลค่าสูญเสียสะสม)";
+        ? "\u2248 " + fmtTHB(weeklyLossThb) + " บาท / สัปดาห์ (มูลค่าที่จะเสียไปหากชะลอการล้าง)"
+        : "0 บาท / สัปดาห์ (แผงสะอาด ไม่มีมูลค่าสูญเสียสะสม)";
     $("#ddAdvice").textContent = d.soiling_status.advice;
 
     renderAdvisor(d.financial);
@@ -552,7 +691,7 @@ async function openCleaningModal() {
         '<td class="mono font-semibold">' + sid + '</td>' +
         '<td>' + name + ' <span class="muted" style="font-size:12px;">(' + region + ')</span></td>' +
         '<td style="text-align:right;">' +
-          '<input type="number" class="modal-cleaning-input" data-site-id="' + sid + '" value="' + Math.round(cost) + '" step="500" min="0" /> THB' +
+          '<input type="number" class="modal-cleaning-input" data-site-id="' + sid + '" value="' + Math.round(cost) + '" step="500" min="0" /> บาท' +
         '</td>' +
       '</tr>'
     );
@@ -599,20 +738,20 @@ function updateSyncBadge(sync) {
   if (!badge || !sync) return;
   const status = sync.status || "idle";
   if (status === "syncing") {
-    badge.textContent = "\uD83D\uDFE1 Syncing...";
+    badge.textContent = "\uD83D\uDFE1 กำลังซิงค์...";
     badge.style.borderColor = "#fcd34d";
     badge.style.color = "#92400e";
   } else if (status === "success") {
     const timeStr = sync.updated_at ? new Date(sync.updated_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "";
-    badge.textContent = "\uD83D\uDFE2 Local Ready" + (timeStr ? " (" + timeStr + ")" : "");
+    badge.textContent = "\uD83D\uDFE2 พร้อมใช้งาน" + (timeStr ? " (" + timeStr + ")" : "");
     badge.style.borderColor = "#86efac";
     badge.style.color = "#166534";
   } else if (status === "warning") {
-    badge.textContent = "\uD83D\uDFE1 Local Cached (Upstream slow)";
+    badge.textContent = "\uD83D\uDFE1 ใช้ข้อมูลแคช (API ตอบสนองช้า)";
     badge.style.borderColor = "#fcd34d";
     badge.style.color = "#92400e";
   } else {
-    badge.textContent = "\u26AA Local Ready";
+    badge.textContent = "\u26AA พร้อมใช้งาน";
     badge.style.borderColor = "#e2e8f0";
     badge.style.color = "#475569";
   }
@@ -622,7 +761,7 @@ async function manualSync() {
   const btn = $("#btnSyncNow");
   const txt = $("#syncBtnText");
   if (btn) btn.classList.add("syncing");
-  if (txt) txt.textContent = "Syncing...";
+  if (txt) txt.textContent = "กำลังซิงค์...";
   updateSyncBadge({ status: "syncing" });
   try {
     const res = await api("sync", { method: "POST" });
@@ -633,7 +772,7 @@ async function manualSync() {
     updateSyncBadge({ status: "warning" });
   } finally {
     if (btn) btn.classList.remove("syncing");
-    if (txt) txt.textContent = "Sync Data";
+    if (txt) txt.textContent = "ซิงค์ข้อมูล";
   }
 }
 
@@ -693,23 +832,31 @@ function populateSiteFilter() {
   const sel = $("#historySiteFilter");
   if (!sel) return;
   const currentVal = sel.value;
-  sel.innerHTML = '<option value="">All Sites (ทุกไซต์ใน Fleet)</option>' +
-    state.sites
+  const firstSiteId = state.sites && state.sites.length > 0 ? state.sites[0].site_id : "";
+
+  sel.innerHTML =
+    (state.sites || [])
       .map((s) => '<option value="' + s.site_id + '">' + s.site_id + " &mdash; " + s.site_name + "</option>")
-      .join("");
-  if (currentVal) sel.value = currentVal;
+      .join("") +
+    '<option value="">ทุกไซต์ใน Fleet (All Sites)</option>';
+
+  if (currentVal && Array.from(sel.options).some((o) => o.value === currentVal)) {
+    sel.value = currentVal;
+  } else if (firstSiteId) {
+    sel.value = firstSiteId;
+  }
 }
 
 async function loadDailyHistory(days = 7, siteId = "") {
   const tbody = $("#fleetHistoryTableBody");
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted); font-size:13.5px;">Loading daily history records...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted); font-size:13.5px;">กำลังโหลดข้อมูลประวัติรายวัน...</td></tr>';
   try {
     const filterSite = siteId || ($("#historySiteFilter") ? $("#historySiteFilter").value : "");
     const query = "history-daily?days=" + days + (filterSite ? "&site_id=" + encodeURIComponent(filterSite) : "");
     const data = await api(query);
     if (!data || data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted);">No daily records found for this selection.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted);">ไม่พบข้อมูลประวัติรายวันตามเงื่อนไขที่เลือก</td></tr>';
       return;
     }
     tbody.innerHTML = "";
@@ -718,8 +865,8 @@ async function loadDailyHistory(days = 7, siteId = "") {
       const dailyLoss = r.daily_loss_thb || 0;
       const badge = soilingBadge(loss);
       const lossDisplay = (loss < 5 || dailyLoss <= 0)
-        ? "(0 THB/day)"
-        : "(\u2212" + fmtInt(dailyLoss) + " THB/day)";
+        ? "(0 บาท/วัน)"
+        : "(\u2212" + fmtInt(dailyLoss) + " บาท/วัน)";
 
       const tr = document.createElement("tr");
       tr.className = badge.row;
@@ -729,7 +876,7 @@ async function loadDailyHistory(days = 7, siteId = "") {
         "<td>" + (r.site_name || "\u2014") + "</td>" +
         "<td>" + (r.weather_condition || "\u2014") + "</td>" +
         "<td>" + fmt(r.avg_irradiance_w_m2, 1) + " W/m\u00B2</td>" +
-        "<td>" + fmt(r.sun_hours_h, 2) + " h</td>" +
+        "<td>" + fmt(r.sun_hours_h, 2) + " ชม.</td>" +
         "<td>" + fmtInt(r.expected_yield_kwh) + "</td>" +
         "<td>" + fmtInt(r.actual_yield_kwh) + "</td>" +
         '<td><span class="badge ' + badge.cls + '">' + badge.text + "</span></td>" +
@@ -738,22 +885,22 @@ async function loadDailyHistory(days = 7, siteId = "") {
       tbody.appendChild(tr);
     }
     const histUpdated = $("#historyLastUpdated");
-    if (histUpdated) histUpdated.textContent = "Loaded " + data.length + " daily records";
+    if (histUpdated) histUpdated.textContent = "โหลดข้อมูลประวัติรายวันเรียบร้อย " + data.length + " รายการ";
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--red); padding:24px;">Failed to load daily history: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--red); padding:24px;">เกิดข้อผิดพลาดในการโหลดข้อมูลประวัติรายวัน: ' + err.message + '</td></tr>';
   }
 }
 
 async function loadMonthlyHistory(months = 12, siteId = "") {
   const tbody = $("#fleetMonthlyTableBody");
   if (!tbody) return;
-  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted); font-size:13.5px;">Loading monthly history records...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted); font-size:13.5px;">กำลังโหลดข้อมูลประวัติรายเดือน...</td></tr>';
   try {
     const filterSite = siteId || ($("#historySiteFilter") ? $("#historySiteFilter").value : "");
     const query = "history-monthly?months=" + months + (filterSite ? "&site_id=" + encodeURIComponent(filterSite) : "");
     const data = await api(query);
     if (!data || data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted);">No monthly records found for this selection.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:24px; color:var(--muted);">ไม่พบข้อมูลประวัติรายเดือนตามเงื่อนไขที่เลือก</td></tr>';
       return;
     }
     tbody.innerHTML = "";
@@ -762,8 +909,8 @@ async function loadMonthlyHistory(months = 12, siteId = "") {
       const dailyLoss = r.daily_loss_thb || 0;
       const badge = soilingBadge(loss);
       const lossDisplay = (loss < 5 || dailyLoss <= 0)
-        ? "(0 THB)"
-        : "(\u2212" + fmtInt(dailyLoss) + " THB)";
+        ? "(0 บาท)"
+        : "(\u2212" + fmtInt(dailyLoss) + " บาท)";
 
       const tr = document.createElement("tr");
       tr.className = badge.row;
@@ -771,9 +918,9 @@ async function loadMonthlyHistory(months = 12, siteId = "") {
         '<td class="mono font-semibold">' + (r.month || "\u2014") + "</td>" +
         '<td class="site-id-cell">' + (r.site_id || "\u2014") + "</td>" +
         "<td>" + (r.site_name || "\u2014") + "</td>" +
-        "<td>" + (r.days_recorded || "\u2014") + " d</td>" +
+        "<td>" + (r.days_recorded || "\u2014") + " วัน</td>" +
         "<td>" + fmt(r.avg_irradiance_w_m2, 1) + " W/m\u00B2</td>" +
-        "<td>" + fmt(r.sun_hours_h, 1) + " h</td>" +
+        "<td>" + fmt(r.sun_hours_h, 1) + " ชม.</td>" +
         "<td>" + fmtInt(r.expected_yield_kwh) + "</td>" +
         "<td>" + fmtInt(r.actual_yield_kwh) + "</td>" +
         '<td><span class="badge ' + badge.cls + '">' + badge.text + "</span></td>" +
@@ -782,9 +929,9 @@ async function loadMonthlyHistory(months = 12, siteId = "") {
       tbody.appendChild(tr);
     }
     const histUpdated = $("#historyLastUpdated");
-    if (histUpdated) histUpdated.textContent = "Loaded " + data.length + " monthly records";
+    if (histUpdated) histUpdated.textContent = "โหลดข้อมูลประวัติรายเดือนเรียบร้อย " + data.length + " รายการ";
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--red); padding:24px;">Failed to load monthly history: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:var(--red); padding:24px;">เกิดข้อผิดพลาดในการโหลดข้อมูลประวัติรายเดือน: ' + err.message + '</td></tr>';
   }
 }
 
@@ -794,11 +941,11 @@ async function refreshCurrentSiteDaily() {
   const tbody = $("#ddDailyTableBody");
   if (!siteId || !tbody) return;
   const days = $("#ddDailyDaysSelect") ? parseInt($("#ddDailyDaysSelect").value, 10) : 7;
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">Loading ' + days + '-day records...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">กำลังโหลดข้อมูลย้อนหลัง ' + days + ' วัน...</td></tr>';
   try {
     const data = await api("history-daily?days=" + days + "&site_id=" + encodeURIComponent(siteId));
     if (!data || data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">No daily records available.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">ไม่มีข้อมูลประวัติรายวัน</td></tr>';
       return;
     }
     tbody.innerHTML = "";
@@ -806,7 +953,7 @@ async function refreshCurrentSiteDaily() {
       const loss = r.soiling_loss_pct != null ? r.soiling_loss_pct : 0;
       const dailyLoss = r.daily_loss_thb || 0;
       const badge = soilingBadge(loss);
-      const lossDisplay = (loss < 5 || dailyLoss <= 0) ? "(0 THB/day)" : "(\u2212" + fmtInt(dailyLoss) + " THB/day)";
+      const lossDisplay = (loss < 5 || dailyLoss <= 0) ? "(0 บาท/วัน)" : "(\u2212" + fmtInt(dailyLoss) + " บาท/วัน)";
 
       const tr = document.createElement("tr");
       tr.className = badge.row;
@@ -814,7 +961,7 @@ async function refreshCurrentSiteDaily() {
         '<td class="mono font-semibold">' + (r.date || "\u2014") + "</td>" +
         "<td>" + (r.weather_condition || "\u2014") + "</td>" +
         "<td>" + fmt(r.avg_irradiance_w_m2, 1) + " W/m\u00B2</td>" +
-        "<td>" + fmt(r.sun_hours_h, 2) + " h</td>" +
+        "<td>" + fmt(r.sun_hours_h, 2) + " ชม.</td>" +
         "<td>" + fmtInt(r.expected_yield_kwh) + "</td>" +
         "<td>" + fmtInt(r.actual_yield_kwh) + "</td>" +
         '<td><span class="badge ' + badge.cls + '">' + badge.text + "</span></td>" +
@@ -822,7 +969,7 @@ async function refreshCurrentSiteDaily() {
       tbody.appendChild(tr);
     }
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--red); padding:18px;">Failed to load daily breakdown: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--red); padding:18px;">เกิดข้อผิดพลาดในการโหลดข้อมูลประวัติรายวัน: ' + err.message + '</td></tr>';
   }
 }
 
@@ -831,11 +978,11 @@ async function refreshCurrentSiteMonthly() {
   const tbody = $("#ddMonthlyTableBody");
   if (!siteId || !tbody) return;
   const months = $("#ddMonthlyMonthsSelect") ? parseInt($("#ddMonthlyMonthsSelect").value, 10) : 12;
-  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">Loading ' + months + '-month records...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">กำลังโหลดข้อมูลย้อนหลัง ' + months + ' เดือน...</td></tr>';
   try {
     const data = await api("history-monthly?months=" + months + "&site_id=" + encodeURIComponent(siteId));
     if (!data || data.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">No monthly records available.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--muted);">ไม่มีข้อมูลประวัติรายเดือน</td></tr>';
       return;
     }
     tbody.innerHTML = "";
@@ -843,15 +990,15 @@ async function refreshCurrentSiteMonthly() {
       const loss = r.soiling_loss_pct != null ? r.soiling_loss_pct : 0;
       const dailyLoss = r.daily_loss_thb || 0;
       const badge = soilingBadge(loss);
-      const lossDisplay = (loss < 5 || dailyLoss <= 0) ? "(0 THB)" : "(\u2212" + fmtInt(dailyLoss) + " THB)";
+      const lossDisplay = (loss < 5 || dailyLoss <= 0) ? "(0 บาท)" : "(\u2212" + fmtInt(dailyLoss) + " บาท)";
 
       const tr = document.createElement("tr");
       tr.className = badge.row;
       tr.innerHTML =
         '<td class="mono font-semibold">' + (r.month || "\u2014") + "</td>" +
-        "<td>" + (r.days_recorded || "\u2014") + " d</td>" +
+        "<td>" + (r.days_recorded || "\u2014") + " วัน</td>" +
         "<td>" + fmt(r.avg_irradiance_w_m2, 1) + " W/m\u00B2</td>" +
-        "<td>" + fmt(r.sun_hours_h, 1) + " h</td>" +
+        "<td>" + fmt(r.sun_hours_h, 1) + " ชม.</td>" +
         "<td>" + fmtInt(r.expected_yield_kwh) + "</td>" +
         "<td>" + fmtInt(r.actual_yield_kwh) + "</td>" +
         '<td><span class="badge ' + badge.cls + '">' + badge.text + "</span></td>" +
@@ -859,7 +1006,7 @@ async function refreshCurrentSiteMonthly() {
       tbody.appendChild(tr);
     }
   } catch (err) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--red); padding:18px;">Failed to load monthly breakdown: ' + err.message + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:var(--red); padding:18px;">เกิดข้อผิดพลาดในการโหลดข้อมูลประวัติรายเดือน: ' + err.message + '</td></tr>';
   }
 }
 
@@ -909,7 +1056,7 @@ function switchFleetView(mode) {
   if (monthlyRangeWrap) monthlyRangeWrap.classList.toggle("hidden", !isMonthly);
 
   if (fleetTableTitle) {
-    fleetTableTitle.textContent = isLive ? "Real-time Fleet Status" : isDaily ? "Fleet Daily History" : "Fleet Monthly History";
+    fleetTableTitle.textContent = isLive ? "สถานะระบบ Real-time ทุกไซต์" : isDaily ? "ประวัติรายวันทุกไซต์ (Fleet Daily History)" : "ประวัติรายเดือนทุกไซต์ (Fleet Monthly History)";
   }
 
   const siteId = $("#historySiteFilter") ? $("#historySiteFilter").value : "";
@@ -938,16 +1085,56 @@ window.saveAllCleaningCosts = saveAllCleaningCosts;
 
 /* ---------- Init ---------- */
 async function init() {
-  // Navigation
+  // Mobile Drawer Navigation Helpers
+  function closeMobileSidebar() {
+    const sidebar = $("#sidebar");
+    const backdrop = $("#sidebarBackdrop");
+    if (sidebar) sidebar.classList.remove("mobile-open");
+    if (backdrop) backdrop.classList.remove("active");
+  }
+
+  // Navigation Links
   $$(".nav-item").forEach((n) => {
     n.addEventListener("click", (e) => {
       e.preventDefault();
       switchView(n.dataset.view);
+      if (window.innerWidth <= 768) {
+        closeMobileSidebar();
+      }
     });
   });
-  $("#menuToggle").addEventListener("click", () =>
-    $("#sidebar").classList.toggle("collapsed")
-  );
+
+  // Hamburger / Collapse Button
+  const menuToggle = $("#menuToggle");
+  if (menuToggle) {
+    menuToggle.addEventListener("click", () => {
+      if (window.innerWidth <= 768) {
+        const sidebar = $("#sidebar");
+        const backdrop = $("#sidebarBackdrop");
+        if (sidebar) {
+          const isOpen = sidebar.classList.toggle("mobile-open");
+          if (backdrop) backdrop.classList.toggle("active", isOpen);
+        }
+      } else {
+        const sidebar = $("#sidebar");
+        if (sidebar) sidebar.classList.toggle("collapsed");
+      }
+    });
+  }
+
+  // Dismiss backdrop click
+  const backdrop = $("#sidebarBackdrop");
+  if (backdrop) {
+    backdrop.addEventListener("click", closeMobileSidebar);
+  }
+
+  // Clean up on viewport resize
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) {
+      closeMobileSidebar();
+    }
+  });
+
   $("#btnRefresh").addEventListener("click", refreshFleet);
   $("#btnRefreshTop").addEventListener("click", refreshFleet);
 

@@ -145,32 +145,32 @@ def dispatch_recommendation(projected_30d_thb: float, cleaning_cost: float) -> D
     """AI action recommendation based on the 30-day projected revenue loss (Cost of Inaction)."""
     if projected_30d_thb > cleaning_cost:
         net_saving = projected_30d_thb - cleaning_cost
-        title = "⚠️ ACTION REQUIRED: สั่งล้างทันทีคุ้มค่ากว่า"
+        title = "⚠️ ต้องดำเนินการ: สั่งล้างทันทีคุ้มค่ากว่า"
         body = (
-            f"หากไม่ล้างวันนี้ ระบบจะสูญเสียรายได้รวม {projected_30d_thb:,.0f} THB ในอีก 30 วันข้างหน้า "
-            f"ซึ่งสูงกว่าค่าล้าง {cleaning_cost:,.0f} THB การตัดสินใจล้างวันนี้จะช่วยรักษาผลประโยชน์สุทธิได้ +{net_saving:,.0f} THB"
+            f"หากไม่ล้างวันนี้ ระบบจะสูญเสียรายได้สะสมรวม {projected_30d_thb:,.0f} บาท ในอีก 30 วันข้างหน้า "
+            f"ซึ่งสูงกว่าค่าบริการล้าง {cleaning_cost:,.0f} บาท การตัดสินใจล้างวันนี้จะช่วยรักษาผลประโยชน์สุทธิได้ +{net_saving:,.0f} บาท"
         )
         return {
             "action": "RECOMMEND_DISPATCH",
             "color": "red",
             "title": title,
-            "badge_text": "⚠️ ACTION REQUIRED",
+            "badge_text": "⚠️ สั่งล้างทันที",
             "net_saving_thb": round(net_saving, 2),
             "message": f"{title}\n{body}",
             "html_message": f"<strong>{title}</strong><br>{body}",
         }
 
-    title = "ℹ️ MONITORING: ยังไม่จำเป็นต้องล้างวันนี้"
+    title = "ℹ️ เฝ้าระวัง: ยังไม่จำเป็นต้องล้างวันนี้"
     body = (
-        f"หากปล่อยทิ้งไว้ 30 วัน ความเสียหายสะสมอยู่ที่ {projected_30d_thb:,.0f} THB "
-        f"ซึ่งยังน้อยกว่าค่าบริการล้าง {cleaning_cost:,.0f} THB แนะนำให้เฝ้าระวังต่อเพื่อไม่ให้เสียค่าใช้จ่ายโดยไม่จำเป็น"
+        f"หากปล่อยทิ้งไว้ 30 วัน ความเสียหายสะสมอยู่ที่ {projected_30d_thb:,.0f} บาท "
+        f"ซึ่งยังน้อยกว่าค่าบริการล้าง {cleaning_cost:,.0f} บาท แนะนำให้เฝ้าระวังต่อเพื่อไม่ให้เสียค่าใช้จ่ายโดยไม่จำเป็น"
     )
     net_benefit = projected_30d_thb - cleaning_cost
     return {
         "action": "NO_ACTION_MONITOR",
         "color": "green",
         "title": title,
-        "badge_text": "ℹ️ MONITORING",
+        "badge_text": "ℹ️ เฝ้าระวังต่อเนื่อง",
         "net_saving_thb": round(net_benefit, 2),
         "message": f"{title}\n{body}",
         "html_message": f"<strong>{title}</strong><br>{body}",

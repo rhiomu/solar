@@ -68,28 +68,28 @@ class SolarAPIClient:
         if loss_pct < 5.0:
             return {
                 "level": "clean",
-                "label": "🟢 Normal (< 5%)",
+                "label": "🟢 ปกติ (< 5%)",
                 "badge_class": "badge-clean",
-                "status_text": "NORMAL",
-                "advice": "Panel clean. No cleaning required.",
-                "roi": "Optimal",
+                "status_text": "ปกติ (NORMAL)",
+                "advice": "แผงโซลาร์สะอาด ประสิทธิภาพการผลิตปกติ ไม่จำเป็นต้องล้าง",
+                "roi": "เหมาะสมที่สุด (ยังไม่จำเป็นต้องล้าง)",
             }
         elif loss_pct < 15.0:
             return {
                 "level": "warning",
-                "label": f"🟡 Warning ({loss_pct:.1f}%)",
+                "label": f"🟡 เฝ้าระวัง ({loss_pct:.1f}%)",
                 "badge_class": "badge-warning",
-                "status_text": "WARNING",
-                "advice": "Moderate dust buildup. Schedule cleaning soon or wait for rain.",
-                "roi": "Medium",
+                "status_text": "เฝ้าระวัง (WARNING)",
+                "advice": "เริ่มมีคราบฝุ่นสะสม แนะนำให้เตรียมวางแผนจัดตารางล้างแผงเร็วๆ นี้",
+                "roi": "ปานกลาง (เริ่มมีความคุ้มค่า)",
             }
         else:
             return {
                 "level": "critical",
-                "label": f"🔴 Critical ({loss_pct:.1f}%)",
+                "label": f"🔴 วิกฤต ({loss_pct:.1f}%)",
                 "badge_class": "badge-critical",
-                "status_text": "CRITICAL",
-                "advice": "Heavy soiling detected! Immediate team dispatch recommended.",
-                "roi": "High (Immediate Action)",
+                "status_text": "วิกฤต (CRITICAL)",
+                "advice": "ตรวจพบคราบฝุ่นหนาแน่นสูง! แนะนำให้จัดส่งทีมเข้าล้างแผงทันที",
+                "roi": "สูงมาก (ควรส่งทีมล้างทันที)",
             }
 
