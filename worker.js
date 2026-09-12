@@ -284,8 +284,15 @@ function buildSiteRow(t, yesterdayRecord, feedInTariff) {
     statusLabel = `🔴 Critical (${soilingLossPct.toFixed(1)}%) (-${fmt(dailyLostThb)} THB/day)`;
   }
 
+  const load = Number(t.load_power_kw || 0);
+  let flowStatus = "Balanced";
+  if (pv > load) flowStatus = "Exported";
+  else if (pv < load) flowStatus = "Imported";
+
   return {
     ...t,
+    flow_status: flowStatus,
+    net_flow_kw: Math.round((pv - load) * 100) / 100,
     capacity_kwp: capacityKwp,
     self_consumed_kwh: Math.round(selfConsumed * 100) / 100,
     estimated_soiling_loss_pct: soilingLossPct,
@@ -369,7 +376,9 @@ export default {
         return jsonResponse({
           tariffs: {
             grid_import: state.gridImportTariff,
+            grid_import_tariff: state.gridImportTariff,
             feed_in: state.feedInTariff,
+            feed_in_tariff: state.feedInTariff,
             cleaning_cost: 15000.0,
           },
           site_settings: siteSettings,
@@ -387,7 +396,9 @@ export default {
           state.feedInTariff = Number(body.feed_in_tariff);
         }
         return jsonResponse({
+          feed_in: state.feedInTariff,
           feed_in_tariff: state.feedInTariff,
+          grid_import: state.gridImportTariff,
           grid_import_tariff: state.gridImportTariff,
           updated_at: new Date().toISOString(),
         });
@@ -457,20 +468,25 @@ export default {
           return row;
         });
 
+        const summaryObj = {
+          total_capacity_mwp: Math.round((totalCapKwp / 1000.0) * 100) / 100,
+          total_yield_mwh: Math.round((totalYield / 1000.0) * 100) / 100,
+          total_consumed_mwh: Math.round((totalConsumed / 1000.0) * 100) / 100,
+          total_exported_mwh: Math.round((totalExported / 1000.0) * 100) / 100,
+          sites_count: siteRows.length,
+          today_financial_value_thb: Math.round(financialVal * 100) / 100,
+          today_revenue_lost_thb: Math.round(totalLostThb * 100) / 100,
+        };
+
         return jsonResponse({
-          fleet_summary: {
-            total_capacity_mwp: Math.round((totalCapKwp / 1000.0) * 100) / 100,
-            total_yield_mwh: Math.round((totalYield / 1000.0) * 100) / 100,
-            total_consumed_mwh: Math.round((totalConsumed / 1000.0) * 100) / 100,
-            total_exported_mwh: Math.round((totalExported / 1000.0) * 100) / 100,
-            sites_count: siteRows.length,
-            today_financial_value_thb: Math.round(financialVal * 100) / 100,
-            today_revenue_lost_thb: Math.round(totalLostThb * 100) / 100,
-          },
+          summary: summaryObj,
+          fleet_summary: summaryObj,
           sites: siteRows,
           tariffs: {
             grid_import: state.gridImportTariff,
+            grid_import_tariff: state.gridImportTariff,
             feed_in: state.feedInTariff,
+            feed_in_tariff: state.feedInTariff,
             cleaning_cost: 15000.0,
           },
           sync: {

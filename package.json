@@ -2,6 +2,7 @@
   "name": "solar",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Solar Fleet Operations Dashboard on Cloudflare Workers",
   "main": "worker.js",
   "scripts": {

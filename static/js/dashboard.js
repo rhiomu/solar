@@ -57,27 +57,28 @@ function flowBadge(flow) {
 }
 
 function renderFleet(data) {
-  const s = data.summary;
-  $("#mCapacity").textContent = fmt(s.total_capacity_mwp, 2) + " MWp";
-  $("#mYield").textContent = fmt(s.total_yield_mwh, 2) + " MWh";
-  $("#mConsumed").textContent = fmt(s.total_consumed_mwh, 2) + " MWh";
-  $("#mExported").textContent = fmt(s.total_exported_mwh, 2) + " MWh";
+  const s = data.summary || data.fleet_summary || {};
+  $("#mCapacity").textContent = fmt(s.total_capacity_mwp || 0, 2) + " MWp";
+  $("#mYield").textContent = fmt(s.total_yield_mwh || 0, 2) + " MWh";
+  $("#mConsumed").textContent = fmt(s.total_consumed_mwh || 0, 2) + " MWh";
+  $("#mExported").textContent = fmt(s.total_exported_mwh || 0, 2) + " MWh";
   const finValue = Math.max(0, s.today_financial_value_thb || 0);
   $("#mFinValue").textContent = fmtTHB(finValue) + " THB";
   const lostVal = Math.max(0, s.today_revenue_lost_thb || 0);
   $("#mRevLost").textContent = fmtTHB(lostVal) + " THB";
   $("#mRevLost").classList.toggle("is-zero", lostVal <= 0);
-  $("#fleetSiteCount").textContent = s.sites_count;
+  $("#fleetSiteCount").textContent = s.sites_count || (data.sites ? data.sites.length : 0);
 
   if (data.tariffs) {
     state.tariffs = data.tariffs;
+    const fit = data.tariffs.feed_in_tariff !== undefined ? data.tariffs.feed_in_tariff : data.tariffs.feed_in;
     const inputTariff = $("#inputFeedInTariff");
-    if (inputTariff && document.activeElement !== inputTariff) {
-      inputTariff.value = Number(data.tariffs.feed_in).toFixed(2);
+    if (inputTariff && document.activeElement !== inputTariff && !isNaN(Number(fit))) {
+      inputTariff.value = Number(fit).toFixed(2);
     }
     const revLostSub = $("#mRevLostSub");
-    if (revLostSub) {
-      revLostSub.textContent = "(Real-time sensor estimation & 4.5 PSH at " + Number(data.tariffs.feed_in).toFixed(2) + " THB/kWh)";
+    if (revLostSub && !isNaN(Number(fit))) {
+      revLostSub.textContent = "(Real-time sensor estimation & 4.5 PSH at " + Number(fit).toFixed(2) + " THB/kWh)";
     }
   }
 
@@ -441,11 +442,12 @@ async function loadSettings() {
     const res = await api("settings");
     if (res.tariffs) {
       state.tariffs = res.tariffs;
+      const fit = res.tariffs.feed_in_tariff !== undefined ? res.tariffs.feed_in_tariff : res.tariffs.feed_in;
       const inputTariff = $("#inputFeedInTariff");
-      if (inputTariff) inputTariff.value = Number(res.tariffs.feed_in_tariff).toFixed(2);
+      if (inputTariff && !isNaN(Number(fit))) inputTariff.value = Number(fit).toFixed(2);
       const revLostSub = $("#mRevLostSub");
-      if (revLostSub) {
-        revLostSub.textContent = "(Real-time sensor estimation & 4.5 PSH at " + Number(res.tariffs.feed_in_tariff).toFixed(2) + " THB/kWh)";
+      if (revLostSub && !isNaN(Number(fit))) {
+        revLostSub.textContent = "(Real-time sensor estimation & 4.5 PSH at " + Number(fit).toFixed(2) + " THB/kWh)";
       }
     }
     if (res.site_settings) {
