@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solar Fleet Operations &amp; Monitoring Dashboard</title>
+  <link rel="icon" type="image/png" href="./assets/logo.png">
+  <link rel="stylesheet" href="./css/style.css?v=2">
+  <style>
+    .panel-title-group { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .view-toggle-group { display: inline-flex; background: #e2e8f0; border-radius: 8px; padding: 4px; gap: 4px; }
+    .btn-toggle {
+      border: none;
+      background: transparent;
+      color: #64748b;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-toggle:hover { color: #1e293b; }
+    .btn-toggle.active {
+      background: #2563eb !important;
+      color: #ffffff !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+    .btn-toggle:not(.active) {
+      background: transparent !important;
+      color: #64748b !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img src="./assets/logo.png" alt="Solar" class="brand-logo">
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="nav-item active" data-view="fleet">
+          <span class="nav-icon">&#9638;</span> Fleet Overview
+        </a>
+        <a href="#" class="nav-item" data-view="deepdive">
+          <span class="nav-icon">&#9758;</span> Deep-Dive
+        </a>
+        <a href="#" class="nav-item" data-view="analytics">
+          <span class="nav-icon">&#9636;</span> Analytics
+        </a>
+        <a href="#" class="nav-item" data-view="settings">
+          <span class="nav-icon">&#9881;</span> Settings
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <p>App running on <span class="mono">0.0.0.0:8000</span>.</p>
+        <p class="muted">All assets are referred to by <span class="mono">./assets/logo.png</span> style relative paths.</p>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar">
+        <button class="icon-btn" id="menuToggle" title="Toggle menu">&#9776;</button>
+        <div class="topbar-title" id="topbarTitle">G1 Group (Pathum Thani District)</div>
+        <div class="topbar-right">
+          <button class="btn-sync-now" id="btnSyncNow" onclick="manualSync()" title="ซิงค์ข้อมูลกับเซิร์ฟเวอร์">
+            <span class="sync-icon" id="syncIcon">&#8635;</span> <span id="syncBtnText">Sync Data</span>
+          </button>
+          <span class="sync-status-badge" id="syncBadge">Local Ready</span>
+          <button class="icon-btn" id="btnRefreshTop" title="Refresh">&#8635;</button>
+          <span class="user-chip"><span class="avatar">&#128100;</span> phornnateepr</span>
+          <span class="online-badge" id="connectionBadge">ONLINE</span>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- Fleet Overview -->
+        <section id="view-fleet" class="view">
+          <h1 class="view-title">Fleet Overview (<span id="fleetSiteCount">10</span> Sites)</h1>
+
+          <!-- Quick Tariff & Settings Toolbar -->
+          <div class="fleet-quick-toolbar">
+            <div class="tariff-control">
+              <span class="tariff-badge-icon">⚡</span>
+              <label for="inputFeedInTariff" class="tariff-title">เรทส่งคืนการไฟฟ้า (Feed-in Tariff):</label>
+              <div class="tariff-input-group">
+                <input type="number" id="inputFeedInTariff" step="0.05" min="0" max="50" value="2.20" class="tariff-num-input" />
+                <span class="tariff-unit-label">THB / kWh</span>
+              </div>
+              <button class="btn btn-sm btn-primary" id="btnSaveTariff" onclick="saveFeedInTariff()">บันทึกเรท</button>
+              <span id="tariffSaveMsg" class="tariff-saved-msg hidden">&#10003; บันทึกสำเร็จ</span>
+            </div>
+            <div class="toolbar-actions">
+              <button class="btn btn-sm btn-outline" id="btnOpenCleaningModal" onclick="openCleaningModal()">
+                ⚙️ ตั้งค่าค่าล้าง 10 ไซต์ (Site Cleaning Costs)
+              </button>
+            </div>
+          </div>
+
+          <div class="metric-cards">
+            <div class="metric-card card-capacity">
+              <div class="metric-icon">&#9728;</div>
+              <div>
+                <div class="metric-label">Total Capacity</div>
+                <div class="metric-value" id="mCapacity">&mdash; MWp</div>
+              </div>
+            </div>
+            <div class="metric-card card-yield">
+              <div class="metric-icon">&#9889;</div>
+              <div>
+                <div class="metric-label">Today's Total Yield</div>
+                <div class="metric-value" id="mYield">&mdash; MWh</div>
+              </div>
+            </div>
+            <div class="metric-card card-consumed">
+              <div class="metric-icon">&#9879;</div>
+              <div>
+                <div class="metric-label">Today's Self-Consumption</div>
+                <div class="metric-value" id="mConsumed">&mdash; MWh</div>
+              </div>
+            </div>
+            <div class="metric-card card-exported">
+              <div class="metric-icon">&#8635;</div>
+              <div>
+                <div class="metric-label">Total Exported (Teal)</div>
+                <div class="metric-value" id="mExported">&mdash; MWh</div>
+              </div>
+            </div>
+            <div class="metric-card card-finvalue">
+              <div class="metric-icon">&#128176;</div>
+              <div>
+                <div class="metric-label">Today's Financial Value</div>
+                <div class="metric-value" id="mFinValue">&mdash; THB</div>
+                <div class="metric-sub" id="mFinValueSub">(self-consumption &times; 4.50 + exported &times; 2.20)</div>
+              </div>
+            </div>
+            <div class="metric-card card-finlost">
+              <div class="metric-icon">&#9888;</div>
+              <div>
+                <div class="metric-label">Estimated Revenue Lost Today</div>
+                <div class="metric-value" id="mRevLost">&mdash; THB</div>
+                <div class="metric-sub" id="mRevLostSub">(Real-time sensor estimation &amp; 4.5 PSH at 2.20 THB/kWh)</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title-group">
+                <h2 id="fleetTableTitle">Real-time Fleet Status</h2>
+                <div class="view-toggle-group">
+                  <button class="btn-toggle active" id="btnViewLive" data-mode="live" onclick="switchFleetView('live')">&#9889; Real-time Telemetry</button>
+                  <button class="btn-toggle" id="btnViewDailyHistory" data-mode="daily" onclick="switchFleetView('daily')">&#128197; Daily History (ดูข้อมูลรายวัน)</button>
+                  <button class="btn-toggle" id="btnViewMonthlyHistory" data-mode="monthly" onclick="switchFleetView('monthly')">&#128202; Monthly History (ดูข้อมูลรายเดือน)</button>
+                </div>
+              </div>
+              <div class="refresh-controls" id="liveControls">
+                <label class="auto-toggle">
+                  <input type="checkbox" id="autoRefresh" checked> Auto-refresh (<span id="refreshIntervalLabel">30s</span>)
+                </label>
+                <select id="refreshInterval" class="small-select">
+                  <option value="10">10s</option>
+                  <option value="30" selected>30s</option>
+                  <option value="60">60s</option>
+                </select>
+                <button class="btn btn-primary" id="btnRefresh">&#8635; Refresh Now</button>
+                <span class="last-updated" id="lastUpdated">Last updated: &mdash;</span>
+              </div>
+              <div class="history-controls hidden" id="historyControls">
+                <label for="historySiteFilter" class="field-label-inline">&#128205; Site:</label>
+                <select id="historySiteFilter" class="small-select">
+                  <option value="">All Sites (ทุกไซต์ใน Fleet)</option>
+                </select>
+                <span id="dailyRangeWrap">
+                  <label for="historyDaysSelect" class="field-label-inline">&#128197; Range:</label>
+                  <select id="historyDaysSelect" class="small-select">
+                    <option value="1">Yesterday (1 Day)</option>
+                    <option value="7" selected>Last 7 Days</option>
+                    <option value="14">Last 14 Days</option>
+                    <option value="30">Last 30 Days</option>
+                  </select>
+                </span>
+                <span id="monthlyRangeWrap" class="hidden">
+                  <label for="historyMonthsSelect" class="field-label-inline">&#128202; Range:</label>
+                  <select id="historyMonthsSelect" class="small-select">
+                    <option value="3">Last 3 Months</option>
+                    <option value="6">Last 6 Months</option>
+                    <option value="12" selected>Last 12 Months</option>
+                  </select>
+                </span>
+                <button class="btn btn-primary" id="btnRefreshHistory">&#8635; Load</button>
+                <span class="last-updated" id="historyLastUpdated">Historical baseline</span>
+              </div>
+            </div>
+            <div class="table-wrap" id="liveTableWrap">
+              <table class="fleet-table">
+                <thead>
+                  <tr>
+                    <th>Site ID</th>
+                    <th>Site Name</th>
+                    <th>Irradiance (W/m&sup2;)</th>
+                    <th>PV Power (kW)</th>
+                    <th>Load Power (kW)</th>
+                    <th>Flow Status</th>
+                    <th>Today Yield (kWh)</th>
+                    <th>Consumed (kWh)</th>
+                    <th>Sun Hours (h)</th>
+                    <th>Estimated Soiling Loss (%)</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetTableBody"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap hidden" id="historyTableWrap">
+              <table class="fleet-table history-table">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Site ID</th>
+                    <th>Site Name</th>
+                    <th>Weather</th>
+                    <th>Avg Irradiance</th>
+                    <th>Sun Hours (h)</th>
+                    <th>Expected Yield (kWh)</th>
+                    <th>Actual Yield (kWh)</th>
+                    <th>Estimated Soiling Loss (%)</th>
+                    <th>Revenue Lost (THB)</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetHistoryTableBody"></tbody>
+              </table>
+            </div>
+            <div class="table-wrap hidden" id="monthlyTableWrap">
+              <table class="fleet-table history-table">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Site ID</th>
+                    <th>Site Name</th>
+                    <th>Days</th>
+                    <th>Avg Irradiance</th>
+                    <th>Sun Hours (h)</th>
+                    <th>Expected Yield (kWh)</th>
+                    <th>Actual Yield (kWh)</th>
+                    <th>Estimated Soiling Loss (%)</th>
+                    <th>Revenue Lost (THB)</th>
+                  </tr>
+                </thead>
+                <tbody id="fleetMonthlyTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+        <!-- Site Deep-Dive -->
+        <section id="view-deepdive" class="view hidden">
+          <div class="deepdive-header">
+            <h1 class="view-title" id="deepdiveTitle">Site Deep-Dive: &mdash;</h1>
+            <select id="siteSelect" class="site-select"></select>
+          </div>
+
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="day">Day Analysis</button>
+            <button class="tab-btn" data-tab="month">Month Trends</button>
+          </div>
+
+          <!-- Day tab -->
+          <div id="tab-day" class="tab-pane">
+            <div class="panel advisor-panel">
+              <div class="panel-header">
+                <h2>AI Financial Forecast &amp; Cleaning ROI Advisor</h2>
+                <span class="advisor-badge" id="advisorBadge">&mdash;</span>
+              </div>
+              <div class="advisor-grid">
+                <div class="advisor-card">
+                  <div class="advisor-label">7-Day Cost of Inaction</div>
+                  <div class="advisor-value" id="adv7d">&mdash; THB</div>
+                  <div class="advisor-sub" id="adv7dSub">เงินที่จะหายไปใน 7 วันข้างหน้าหากไม่ล้างวันนี้</div>
+                </div>
+                <div class="advisor-card">
+                  <div class="advisor-label">30-Day Cost of Inaction</div>
+                  <div class="advisor-value" id="adv30d">&mdash; THB</div>
+                  <div class="advisor-sub" id="adv30dSub">เงินที่จะหายไปใน 30 วันข้างหน้าหากไม่ล้างวันนี้</div>
+                </div>
+                <div class="advisor-card" style="position:relative;">
+                  <div class="advisor-label" style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Cleaning Service Cost</span>
+                    <button class="btn-xs-link" id="btnEditSiteCost" onclick="toggleSiteCleaningEdit()" title="แก้ไขค่าบริการล้างแผงสำหรับไซต์นี้">&#9998; แก้ไข</button>
+                  </div>
+                  <div class="advisor-value" id="advCost">&mdash; THB</div>
+                  <div class="advisor-sub" id="advCostSub">ต้นทุนค่าบริการล้างแผงของไซต์นี้</div>
+                  <div id="inlineCleaningCostBox" class="inline-edit-box hidden">
+                    <input type="number" id="inputSiteCleaningCost" step="500" min="0" />
+                    <button class="btn btn-sm btn-primary" onclick="saveSiteCleaningCost()">บันทึก</button>
+                    <button class="btn btn-sm btn-secondary" onclick="toggleSiteCleaningEdit()">ยกเลิก</button>
+                  </div>
+                </div>
+                <div class="advisor-card">
+                  <div class="advisor-label" id="advNetLabel">Net Benefit of Cleaning Today</div>
+                  <div class="advisor-value" id="advNet">&mdash; THB</div>
+                  <div class="advisor-sub" id="advNetSub">ผลประโยชน์สุทธิถ้าล้างวันนี้</div>
+                </div>
+              </div>
+              <div class="advisor-alert advisor-green" id="advisorAlert">
+                <span class="advisor-alert-icon">&#9889;</span>
+                <span id="advisorAlertText">Load a site to generate the AI recommendation.</span>
+              </div>
+            </div>
+
+            <div class="charts-grid">
+              <div class="panel chart-panel">
+                <div class="panel-title-row">
+                  <h2>Real-time Power Flow (kW)</h2>
+                  <span id="powerFlowNightBadge" class="badge badge-night hidden">&#127769; Night-time / Inactive generation</span>
+                </div>
+                <div class="canvas-wrap"><canvas id="powerFlowChart"></canvas></div>
+              </div>
+              <div class="panel chart-panel">
+                <h2>Cumulative Energy (kWh) &mdash; Last 7 Days</h2>
+                <div class="canvas-wrap"><canvas id="cumEnergyChart"></canvas></div>
+              </div>
+            </div>
+
+
+            <div class="deepdive-lower">
+              <div class="panel metric-stack">
+                <h2>Key Metrics (7-day avg)</h2>
+                <div class="stack-cards">
+                  <div class="stack-card green">
+                    <div class="metric-label">Expected Sun Hours</div>
+                    <div class="metric-value" id="ddExpSun">&mdash;</div>
+                  </div>
+                  <div class="stack-card green">
+                    <div class="metric-label">Actual Sun Hours</div>
+                    <div class="metric-value" id="ddActSun">&mdash;</div>
+                  </div>
+                  <div class="stack-card green">
+                    <div class="metric-label">Estimated PR <span class="warn-ico" id="ddPrIcon"></span></div>
+                    <div class="metric-value" id="ddPR">&mdash;</div>
+                  </div>
+                  <div class="stack-card amber" id="ddLossCard">
+                    <div class="metric-label">Soiling Loss <span class="warn-ico" id="ddLossIcon"></span></div>
+                    <div class="metric-value" id="ddLoss">&mdash;</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel soiling-panel">
+                <h2>Smart Soiling &amp; Anomaly Detection</h2>
+                <div class="gauge-wrap">
+                  <canvas id="soilingGauge"></canvas>
+                  <div class="gauge-center">
+                    <div class="gauge-value" id="gaugeValue">&mdash;</div>
+                    <div class="gauge-status" id="gaugeStatus">Status</div>
+                  </div>
+                </div>
+                <div class="soiling-meta">
+                  <div>
+                    <strong>Status:</strong>
+                    <span class="status-chip" id="ddStatusChip">&mdash;</span>
+                  </div>
+                  <div><strong>ROI for Cleaning:</strong> <span id="ddROI">&mdash;</span></div>
+                  <div><strong id="ddOpportunityLossLabel">Opportunity Loss if delayed:</strong> <span id="ddEnergyLost">&mdash;</span></div>
+                  <div class="advice" id="ddAdvice">&mdash;</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel" style="margin-top:20px;">
+              <div class="panel-header">
+                <div class="panel-title-group">
+                  <h2>Site Daily Breakdown (ประวัติรายวันของไซต์นี้)</h2>
+                </div>
+                <div class="history-controls">
+                  <label class="field-label-inline">&#128197; Range:</label>
+                  <select id="ddDailyDaysSelect" class="small-select">
+                    <option value="7" selected>Last 7 Days</option>
+                    <option value="14">Last 14 Days</option>
+                    <option value="30">Last 30 Days</option>
+                  </select>
+                  <button class="btn btn-primary" id="btnRefreshDdDaily" onclick="refreshCurrentSiteDaily()">&#8635; Load</button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="fleet-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Weather</th>
+                      <th>Avg Irradiance</th>
+                      <th>Sun Hours (h)</th>
+                      <th>Expected Yield (kWh)</th>
+                      <th>Actual Yield (kWh)</th>
+                      <th>Estimated Soiling Loss (%)</th>
+                      <th>Revenue Lost (THB)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ddDailyTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Month tab -->
+          <div id="tab-month" class="tab-pane hidden">
+            <div class="panel chart-panel">
+              <h2>Monthly Production Trend &mdash; Last 12 Months (Expected vs Actual Yield)</h2>
+              <div class="canvas-wrap tall"><canvas id="monthlyChart"></canvas></div>
+            </div>
+
+            <div class="panel" style="margin-top:20px;">
+              <div class="panel-header">
+                <div class="panel-title-group">
+                  <h2>Site Monthly Breakdown (ประวัติรายเดือนของไซต์นี้)</h2>
+                </div>
+                <div class="history-controls">
+                  <label class="field-label-inline">&#128202; Range:</label>
+                  <select id="ddMonthlyMonthsSelect" class="small-select">
+                    <option value="3">Last 3 Months</option>
+                    <option value="6">Last 6 Months</option>
+                    <option value="12" selected>Last 12 Months</option>
+                  </select>
+                  <button class="btn btn-primary" id="btnRefreshDdMonthly" onclick="refreshCurrentSiteMonthly()">&#8635; Load</button>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="fleet-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Days Recorded</th>
+                      <th>Avg Irradiance</th>
+                      <th>Sun Hours (h)</th>
+                      <th>Expected Yield (kWh)</th>
+                      <th>Actual Yield (kWh)</th>
+                      <th>Estimated Soiling Loss (%)</th>
+                      <th>Revenue Lost (THB)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ddMonthlyTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Analytics (fleet monthly) -->
+        <section id="view-analytics" class="view hidden">
+          <h1 class="view-title">Fleet Analytics &mdash; Monthly Trends</h1>
+          <div class="panel chart-panel">
+            <h2>All Sites &mdash; Expected vs Actual Yield (kWh)</h2>
+            <div class="canvas-wrap tall"><canvas id="fleetMonthlyChart"></canvas></div>
+          </div>
+        </section>
+
+        <!-- Settings -->
+        <section id="view-settings" class="view hidden">
+          <h1 class="view-title">Settings</h1>
+          <div class="panel">
+            <h2>System Information</h2>
+            <div class="settings-list" id="settingsInfo">
+              <div class="setting-row"><span>Group ID</span><span id="setGroupId">&mdash;</span></div>
+              <div class="setting-row"><span>Solar API Base</span><span id="setApiBase">&mdash;</span></div>
+              <div class="setting-row"><span>Connection</span><span id="setConn">Checking...</span></div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal: Batch Cleaning Cost Configuration -->
+  <div id="modalCleaningCosts" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>⚙️ กำหนดค่าบริการล้างแผงรายไซต์ (Per-Site Cleaning Costs)</h3>
+        <button class="modal-close" onclick="closeCleaningModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          กำหนดค่าบริการล้างแผงโซลาร์สำหรับแต่ละไซต์ (บาท/ครั้ง) เพื่อให้ AI คำนวณความคุ้มค่าทางการเงิน (ROI), ระยะเวลาคืนทุน, และให้คำแนะนำการส่งทีมที่แม่นยำ
+        </p>
+        <div class="table-wrap">
+          <table class="fleet-table" id="cleaningCostTable">
+            <thead>
+              <tr>
+                <th>Site ID</th>
+                <th>Site Name &amp; Region</th>
+                <th style="text-align:right;">ค่าบริการล้าง (THB)</th>
+              </tr>
+            </thead>
+            <tbody id="cleaningCostTableBody">
+              <!-- Populated dynamically via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeCleaningModal()">ยกเลิก</button>
+        <button class="btn btn-primary" onclick="saveAllCleaningCosts()">บันทึกทั้งหมด</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/chart.umd.min.js"></script>
+  <script src="./js/dashboard.js?v=2"></script>
+  <script>
+    function switchFleetView(mode) {
+      var isLive = mode === "live";
+      var isDaily = mode === "daily";
+      var isMonthly = mode === "monthly";
+
+      var btnLive = document.getElementById("btnViewLive");
+      var btnDaily = document.getElementById("btnViewDailyHistory");
+      var btnMonthly = document.getElementById("btnViewMonthlyHistory");
+
+      var liveWrap = document.getElementById("liveTableWrap");
+      var histWrap = document.getElementById("historyTableWrap");
+      var monthWrap = document.getElementById("monthlyTableWrap");
+
+      var liveCtrl = document.getElementById("liveControls");
+      var histCtrl = document.getElementById("historyControls");
+      var dailyRange = document.getElementById("dailyRangeWrap");
+      var monthRange = document.getElementById("monthlyRangeWrap");
+      var title = document.getElementById("fleetTableTitle");
+
+      if (btnLive) {
+        btnLive.classList.toggle("active", isLive);
+        btnLive.style.setProperty("background", isLive ? "#2563eb" : "transparent", "important");
+        btnLive.style.setProperty("color", isLive ? "#ffffff" : "#64748b", "important");
+      }
+      if (btnDaily) {
+        btnDaily.classList.toggle("active", isDaily);
+        btnDaily.style.setProperty("background", isDaily ? "#2563eb" : "transparent", "important");
+        btnDaily.style.setProperty("color", isDaily ? "#ffffff" : "#64748b", "important");
+      }
+      if (btnMonthly) {
+        btnMonthly.classList.toggle("active", isMonthly);
+        btnMonthly.style.setProperty("background", isMonthly ? "#2563eb" : "transparent", "important");
+        btnMonthly.style.setProperty("color", isMonthly ? "#ffffff" : "#64748b", "important");
+      }
+
+      if (liveWrap) liveWrap.classList.toggle("hidden", !isLive);
+      if (liveCtrl) liveCtrl.classList.toggle("hidden", !isLive);
+
+      if (histWrap) histWrap.classList.toggle("hidden", !isDaily);
+      if (monthWrap) monthWrap.classList.toggle("hidden", !isMonthly);
+
+      if (histCtrl) histCtrl.classList.toggle("hidden", isLive);
+      if (dailyRange) dailyRange.classList.toggle("hidden", !isDaily);
+      if (monthRange) monthRange.classList.toggle("hidden", !isMonthly);
+
+      if (title) {
+        title.textContent = isLive ? "Real-time Fleet Status" : isDaily ? "Fleet Daily History" : "Fleet Monthly History";
+      }
+
+      if (isDaily && typeof window.loadDailyHistory === "function") {
+        var daysSel = document.getElementById("historyDaysSelect");
+        var siteSel = document.getElementById("historySiteFilter");
+        window.loadDailyHistory(daysSel ? parseInt(daysSel.value, 10) : 7, siteSel ? siteSel.value : "");
+      }
+      if (isMonthly && typeof window.loadMonthlyHistory === "function") {
+        var monthsSel = document.getElementById("historyMonthsSelect");
+        var siteSel = document.getElementById("historySiteFilter");
+        window.loadMonthlyHistory(monthsSel ? parseInt(monthsSel.value, 10) : 12, siteSel ? siteSel.value : "");
+      }
+    }
+  </script>
+</body>
+</html>
+
+
