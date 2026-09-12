@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solar Fleet Operations &amp; Monitoring Dashboard</title>
-  <link rel="icon" type="image/png" href="./assets/logo.png">
-  <link rel="stylesheet" href="./css/style.css?v=2">
+  <link rel="stylesheet" href="./css/style.css?v=3">
   <style>
     .panel-title-group { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .view-toggle-group { display: inline-flex; background: #e2e8f0; border-radius: 8px; padding: 4px; gap: 4px; }
@@ -40,7 +39,7 @@
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
-        <img src="./assets/logo.png" alt="Solar" class="brand-logo">
+        <span class="brand-text">Solar</span>
       </div>
       <nav class="sidebar-nav">
         <a href="#" class="nav-item active" data-view="fleet">
@@ -58,7 +57,7 @@
       </nav>
       <div class="sidebar-footer">
         <p>App running on <span class="mono">0.0.0.0:8000</span>.</p>
-        <p class="muted">All assets are referred to by <span class="mono">./assets/logo.png</span> style relative paths.</p>
+        <p class="muted">All assets are referred to by relative paths.</p>
       </div>
     </aside>
 
@@ -73,7 +72,7 @@
           </button>
           <span class="sync-status-badge" id="syncBadge">Local Ready</span>
           <button class="icon-btn" id="btnRefreshTop" title="Refresh">&#8635;</button>
-          <span class="user-chip"><span class="avatar">&#128100;</span> phornnateepr</span>
+          <span class="user-chip"><span class="avatar">&#128100;</span> Phornnatee(ป่าน)</span>
           <span class="online-badge" id="connectionBadge">ONLINE</span>
         </div>
       </header>

@@ -51,6 +51,13 @@ body {
   justify-content: center;
   border-bottom: 1px solid var(--navy-3);
 }
+.brand-text {
+  font-size: 24px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+  text-transform: uppercase;
+}
 .brand-logo { width: 44px; height: 44px; object-fit: contain; }
 .sidebar-nav { flex: 1; padding: 12px 0; }
 .nav-item {
