@@ -526,4 +526,9 @@ async def index():
     return FileResponse("static/index.html")
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return FileResponse("static/favicon.ico")
+
+
 app.mount("/", StaticFiles(directory="static"), name="static")
