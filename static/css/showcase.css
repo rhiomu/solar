@@ -1,0 +1,2382 @@
+/* ==========================================================================
+   HELIOS INDUSTRIAL SOLAR SCADA — MODERN SHOWCASE STYLES
+   Design System: Google Stitch Industrial SCADA Dark Mode
+   ========================================================================== */
+
+:root {
+  --scada-bg: #0a0e18;
+  --scada-surface: #101728;
+  --scada-surface-elevated: #131b2e;
+  --scada-card: #12192c;
+  --scada-card-hover: #17223b;
+  --scada-border: #222f46;
+  --scada-border-subtle: rgba(34, 47, 70, 0.6);
+  --scada-border-highlight: rgba(76, 215, 246, 0.4);
+  
+  --scada-cyan: #4cd7f6;
+  --scada-cyan-container: #06b6d4;
+  --scada-cyan-glow: rgba(6, 182, 212, 0.35);
+  
+  --scada-emerald: #4edea3;
+  --scada-emerald-dark: #10b981;
+  --scada-emerald-glow: rgba(16, 185, 129, 0.25);
+  
+  --scada-amber: #ffb95f;
+  --scada-amber-dark: #f59e0b;
+  --scada-amber-glow: rgba(245, 158, 11, 0.25);
+  
+  --scada-rose: #ef4444;
+  --scada-rose-light: #ffb4ab;
+  --scada-rose-glow: rgba(239, 68, 68, 0.35);
+  
+  --scada-text: #f1f5f9;
+  --scada-text-muted: #94a3b8;
+  --scada-text-dim: #64748b;
+  
+  --font-scada-head: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-scada-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* --------------------------------------------------------------------------
+   TOPBAR MODE SWITCHER BUTTONS
+   -------------------------------------------------------------------------- */
+.ui-mode-switch-group {
+  display: inline-flex;
+  align-items: center;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 9999px;
+  padding: 3px;
+  gap: 2px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mode-switch-btn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+}
+
+.mode-switch-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.mode-switch-btn.active {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.45);
+  font-weight: 700;
+}
+
+.mode-switch-btn .mode-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* --------------------------------------------------------------------------
+   SHOWCASE ROOT CONTAINER
+   -------------------------------------------------------------------------- */
+#fleetShowcaseView {
+  font-family: var(--font-scada-body);
+  color: var(--scada-text);
+  margin-top: 4px;
+}
+
+#fleetShowcaseView.hidden {
+  display: none !important;
+}
+
+#fleetClassicView.hidden {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   SHOWCASE ACTION & TARIFF TOOLBAR
+   -------------------------------------------------------------------------- */
+.scada-toolbar {
+  background: var(--scada-surface);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.scada-toolbar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--scada-cyan);
+  box-shadow: 0 0 10px var(--scada-cyan);
+}
+
+.scada-toolbar-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.scada-fit-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scada-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(255, 185, 95, 0.12);
+  border: 1px solid rgba(255, 185, 95, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--scada-amber);
+  font-size: 18px;
+}
+
+.scada-fit-text h4 {
+  margin: 0;
+  font-family: var(--font-scada-head);
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.scada-fit-text p {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: var(--scada-text-muted);
+}
+
+.scada-input-pill {
+  display: flex;
+  align-items: center;
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 4px 10px;
+  gap: 6px;
+}
+
+.scada-input-pill input {
+  width: 65px;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-family: var(--font-scada-head);
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+  outline: none;
+}
+
+.scada-input-pill .unit {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--scada-cyan);
+  text-transform: uppercase;
+}
+
+.btn-scada-save {
+  background: var(--scada-cyan-container);
+  color: #003640;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: var(--font-scada-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-scada-save:hover {
+  background: var(--scada-cyan);
+  box-shadow: 0 0 16px rgba(76, 215, 246, 0.5);
+  transform: translateY(-1px);
+}
+
+.scada-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.btn-scada-cleaning-modal {
+  background: #151e33;
+  color: #e2e8f0;
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.btn-scada-cleaning-modal:hover {
+  background: #1b2640;
+  border-color: var(--scada-cyan);
+  color: #ffffff;
+}
+
+.scada-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--scada-text-muted);
+  text-transform: uppercase;
+}
+
+.scada-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--scada-cyan);
+  box-shadow: 0 0 8px var(--scada-cyan);
+  animation: scadaPulse 2s infinite;
+}
+
+@keyframes scadaPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 215, 246, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(76, 215, 246, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 215, 246, 0); }
+}
+
+/* --------------------------------------------------------------------------
+   HERO METRICS GRID (4 CARDS)
+   -------------------------------------------------------------------------- */
+.scada-hero-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1200px) {
+  .scada-hero-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .scada-hero-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scada-hero-card {
+  background: var(--scada-card);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.scada-hero-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--scada-border-highlight);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.scada-hero-card .hero-meta {
+  z-index: 2;
+}
+
+.scada-hero-card .hero-title {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--scada-text-muted);
+  margin-bottom: 6px;
+}
+
+.scada-hero-card .hero-value-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.scada-hero-card .hero-value {
+  font-family: var(--font-scada-head);
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.scada-hero-card .hero-unit {
+  font-family: var(--font-scada-head);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--scada-cyan);
+}
+
+.scada-hero-card .hero-sub {
+  font-size: 11px;
+  color: var(--scada-text-muted);
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.scada-hero-card .hero-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  z-index: 2;
+}
+
+/* Colors for specific hero cards */
+.scada-hero-card.card-capacity .hero-unit { color: var(--scada-amber); }
+.scada-hero-card.card-capacity .hero-icon-box {
+  background: rgba(255, 185, 95, 0.12);
+  border: 1px solid rgba(255, 185, 95, 0.35);
+  color: var(--scada-amber);
+}
+
+.scada-hero-card.card-yield .hero-value { color: var(--scada-cyan); }
+.scada-hero-card.card-yield .hero-icon-box {
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  color: var(--scada-cyan);
+}
+
+.scada-hero-card.card-consumed .hero-value { color: var(--scada-emerald); }
+.scada-hero-card.card-consumed .hero-icon-box {
+  background: rgba(78, 222, 163, 0.12);
+  border: 1px solid rgba(78, 222, 163, 0.35);
+  color: var(--scada-emerald);
+}
+
+.scada-hero-card.card-exported .hero-value { color: #5eead4; }
+.scada-hero-card.card-exported .hero-icon-box {
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.35);
+  color: #5eead4;
+}
+
+/* Ambient glow orb behind cards */
+.scada-hero-card::after {
+  content: '';
+  position: absolute;
+  right: -20px;
+  bottom: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  filter: blur(28px);
+  pointer-events: none;
+  opacity: 0.15;
+}
+
+.scada-hero-card.card-capacity::after { background: var(--scada-amber); }
+.scada-hero-card.card-yield::after { background: var(--scada-cyan); }
+.scada-hero-card.card-consumed::after { background: var(--scada-emerald); }
+.scada-hero-card.card-exported::after { background: #5eead4; }
+
+/* --------------------------------------------------------------------------
+   FINANCIAL ATTRIBUTION ROW (3 CARDS)
+   -------------------------------------------------------------------------- */
+.scada-fin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 1024px) {
+  .scada-fin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scada-fin-card {
+  background: var(--scada-card);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.scada-fin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.scada-fin-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.scada-fin-head-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scada-fin-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.scada-fin-card.card-revenue .scada-fin-icon {
+  background: rgba(255, 185, 95, 0.12);
+  border: 1px solid rgba(255, 185, 95, 0.35);
+  color: var(--scada-amber);
+}
+
+.scada-fin-card.card-savings .scada-fin-icon {
+  background: rgba(78, 222, 163, 0.12);
+  border: 1px solid rgba(78, 222, 163, 0.35);
+  color: var(--scada-emerald);
+}
+
+.scada-fin-card.card-loss .scada-fin-icon {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: var(--scada-rose);
+  animation: scadaRosePulse 2s infinite;
+}
+
+@keyframes scadaRosePulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 12px 2px rgba(239, 68, 68, 0.4); }
+}
+
+.scada-fin-title-wrap .sub-tag {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.scada-fin-card.card-revenue .sub-tag { color: var(--scada-amber); }
+.scada-fin-card.card-savings .sub-tag { color: var(--scada-emerald); }
+.scada-fin-card.card-loss .sub-tag { color: var(--scada-rose-light); }
+
+.scada-fin-title-wrap h3 {
+  margin: 2px 0 0 0;
+  font-family: var(--font-scada-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.scada-fin-badge {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.scada-fin-card.card-revenue .scada-fin-badge {
+  background: rgba(69, 39, 0, 0.6);
+  border: 1px solid rgba(255, 185, 95, 0.4);
+  color: var(--scada-amber);
+}
+
+.scada-fin-card.card-savings .scada-fin-badge {
+  background: rgba(0, 49, 31, 0.6);
+  border: 1px solid rgba(78, 222, 163, 0.4);
+  color: var(--scada-emerald);
+}
+
+.scada-fin-card.card-loss .scada-fin-badge {
+  background: rgba(147, 0, 10, 0.7);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #ffdad6;
+}
+
+.scada-fin-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.scada-fin-value {
+  font-family: var(--font-scada-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.scada-fin-card.card-savings .scada-fin-value {
+  color: var(--scada-emerald);
+}
+
+.scada-fin-card.card-loss {
+  background: #161424;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.scada-fin-card.card-loss .scada-fin-value {
+  color: #ff8080;
+}
+
+.scada-fin-unit {
+  font-size: 12px;
+  color: var(--scada-text-muted);
+  font-weight: 500;
+}
+
+.scada-fin-footer-box {
+  background: rgba(10, 14, 24, 0.5);
+  border: 1px solid var(--scada-border-subtle);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--scada-text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.scada-fin-card.card-loss .scada-fin-footer-box {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
+  color: #fca5a5;
+}
+
+.scada-btn-link {
+  background: transparent;
+  border: none;
+  color: var(--scada-cyan);
+  font-family: var(--font-scada-head);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s;
+}
+
+.scada-btn-link:hover {
+  text-decoration: underline;
+  color: #a5f3fc;
+}
+
+/* --------------------------------------------------------------------------
+   CONTROLS BAR (VIEW TABS, STATUS FILTER, SORTING, REFRESH)
+   -------------------------------------------------------------------------- */
+.scada-control-bar {
+  background: var(--scada-surface);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.scada-controls-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.scada-view-toggle {
+  display: inline-flex;
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.scada-toggle-btn {
+  border: none;
+  background: transparent;
+  color: var(--scada-text-muted);
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-family: var(--font-scada-head);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+}
+
+.scada-toggle-btn:hover {
+  color: #ffffff;
+}
+
+.scada-toggle-btn.active {
+  background: var(--scada-cyan-container);
+  color: #003640;
+  font-weight: 700;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+}
+
+.scada-divider-v {
+  width: 1px;
+  height: 24px;
+  background: var(--scada-border);
+}
+
+.scada-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.scada-filter-pill {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--scada-text-muted);
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.scada-filter-pill:hover {
+  background: #151e33;
+  color: #ffffff;
+}
+
+.scada-filter-pill.active {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.5);
+  color: var(--scada-cyan);
+  font-weight: 700;
+}
+
+.scada-filter-pill.pill-clean.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.5);
+  color: var(--scada-emerald);
+}
+
+.scada-filter-pill.pill-fair.active {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.5);
+  color: var(--scada-amber);
+}
+
+.scada-filter-pill.pill-critical.active {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.6);
+  color: #f87171;
+}
+
+.pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pill-dot.dot-clean { background: var(--scada-emerald); }
+.pill-dot.dot-fair { background: var(--scada-amber); }
+.pill-dot.dot-critical { background: var(--scada-rose); }
+
+.scada-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.scada-sort-select {
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  color: #f1f5f9;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+}
+
+.scada-sort-select:focus {
+  border-color: var(--scada-cyan);
+}
+
+.btn-scada-refresh {
+  background: #151e33;
+  color: var(--scada-cyan);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.btn-scada-refresh:hover {
+  background: #1b2640;
+  border-color: var(--scada-cyan);
+}
+
+.scada-last-updated {
+  font-family: var(--font-scada-head);
+  font-size: 11px;
+  color: var(--scada-text-muted);
+}
+
+/* --------------------------------------------------------------------------
+   SITE CARDS GRID (10 FLEET SITES)
+   -------------------------------------------------------------------------- */
+.scada-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1400px) {
+  .scada-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .scada-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .scada-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.scada-site-card {
+  background: var(--scada-card);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.scada-site-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(76, 215, 246, 0.6);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 15px rgba(6, 182, 212, 0.15);
+}
+
+/* Critical Accent Border Indicator */
+.scada-site-card.card-status-critical {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.scada-site-card.card-status-critical::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--scada-rose);
+  box-shadow: 0 0 8px var(--scada-rose);
+}
+
+.scada-site-card.card-status-fair {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.scada-site-card.card-status-clean {
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+/* Card Header */
+.scada-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  gap: 8px;
+}
+
+.scada-card-id-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.scada-card-site-id {
+  font-family: var(--font-scada-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--scada-cyan);
+}
+
+.scada-site-card.card-status-critical .scada-card-site-id {
+  color: #f87171;
+}
+
+.scada-site-card.card-status-fair .scada-card-site-id {
+  color: var(--scada-amber);
+}
+
+.scada-live-ping {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--scada-emerald);
+}
+
+.scada-live-ping.ping-crit {
+  background: var(--scada-rose);
+  animation: scadaPulse 1.5s infinite;
+}
+
+.scada-live-ping.ping-fair {
+  background: var(--scada-amber);
+}
+
+.scada-card-name {
+  margin: 3px 0 0 0;
+  font-family: var(--font-scada-head);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.scada-card-status-badge {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.badge-crit {
+  background: rgba(147, 0, 10, 0.6);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+}
+
+.badge-fair {
+  background: rgba(101, 62, 0, 0.6);
+  border: 1px solid rgba(245, 158, 11, 0.5);
+  color: #fde68a;
+}
+
+.badge-clean {
+  background: rgba(0, 82, 54, 0.6);
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  color: #a7f3d0;
+}
+
+/* Card Telemetry Row */
+.scada-card-telemetry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--scada-text-muted);
+  margin-bottom: 12px;
+}
+
+.telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.telemetry-item .val {
+  font-family: var(--font-scada-head);
+  color: #e2e8f0;
+  font-weight: 600;
+}
+
+/* Card Soiling Gauge Section */
+.scada-soiling-gauge-box {
+  background: rgba(10, 14, 24, 0.6);
+  border: 1px solid var(--scada-border-subtle);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+}
+
+.scada-site-card.card-status-critical .scada-soiling-gauge-box {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.scada-site-card.card-status-fair .scada-soiling-gauge-box {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.gauge-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.gauge-top-row .title {
+  font-weight: 600;
+  color: var(--scada-text-muted);
+}
+
+.scada-site-card.card-status-critical .gauge-top-row .title {
+  color: #f87171;
+}
+
+.gauge-top-row .loss-val {
+  font-family: var(--font-scada-head);
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.scada-site-card.card-status-critical .gauge-top-row .loss-val {
+  color: #ff8080;
+}
+
+.gauge-track {
+  width: 100%;
+  height: 6px;
+  background: #0a0e18;
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.gauge-bar {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.6s ease;
+}
+
+.gauge-bar.bar-crit {
+  background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);
+  box-shadow: 0 0 8px #ef4444;
+}
+
+.gauge-bar.bar-fair {
+  background: linear-gradient(90deg, #d97706 0%, #f59e0b 100%);
+  box-shadow: 0 0 8px #f59e0b;
+}
+
+.gauge-bar.bar-clean {
+  background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+  box-shadow: 0 0 8px #10b981;
+}
+
+.gauge-sub-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--scada-text-muted);
+  margin-top: 5px;
+}
+
+.gauge-sub-row .pct-tag {
+  font-family: var(--font-scada-head);
+  font-weight: 700;
+}
+
+.pct-tag.text-crit { color: #f87171; }
+.pct-tag.text-fair { color: var(--scada-amber); }
+.pct-tag.text-clean { color: var(--scada-emerald); }
+
+/* Revenue & Yield Inner Box */
+.scada-card-financial-box {
+  background: rgba(10, 14, 24, 0.6);
+  border: 1px solid var(--scada-border-subtle);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.fin-col-label {
+  font-family: var(--font-scada-head);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--scada-text-dim);
+  text-transform: uppercase;
+}
+
+.fin-col-val {
+  font-family: var(--font-scada-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.fin-col-val.yield-val {
+  font-size: 13px;
+  color: var(--scada-emerald);
+}
+
+/* Card Action Footer */
+.scada-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 8px;
+  border-top: 1px solid var(--scada-border-subtle);
+}
+
+.scada-card-region {
+  font-size: 11px;
+  color: var(--scada-text-muted);
+}
+
+.btn-card-action {
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s;
+}
+
+.btn-card-action.action-crit {
+  background: var(--scada-rose);
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+}
+
+.btn-card-action.action-crit:hover {
+  background: #dc2626;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+}
+
+.btn-card-action.action-fair {
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--scada-amber);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.btn-card-action.action-fair:hover {
+  background: var(--scada-amber);
+  color: #000000;
+}
+
+.btn-card-action.action-clean {
+  background: #18233c;
+  color: var(--scada-cyan);
+  border: 1px solid rgba(76, 215, 246, 0.3);
+}
+
+.btn-card-action.action-clean:hover {
+  background: var(--scada-cyan);
+  color: #002631;
+}
+
+/* --------------------------------------------------------------------------
+   INSIGHT BANNER
+   -------------------------------------------------------------------------- */
+.scada-insight-banner {
+  background: #101728;
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.scada-insight-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 2;
+}
+
+.scada-insight-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: rgba(6, 182, 212, 0.12);
+  border: 1px solid rgba(6, 182, 212, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--scada-cyan);
+  font-size: 22px;
+}
+
+.scada-insight-text h4 {
+  margin: 0;
+  font-family: var(--font-scada-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.scada-insight-text p {
+  margin: 4px 0 0 0;
+  font-size: 12px;
+  color: var(--scada-text-muted);
+}
+
+.btn-scada-dispatch {
+  background: linear-gradient(135deg, #06b6d4 0%, #2563eb 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-family: var(--font-scada-head);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.35);
+  transition: all 0.2s;
+  z-index: 2;
+}
+
+.btn-scada-dispatch:hover {
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+  box-shadow: 0 0 22px rgba(6, 182, 212, 0.55);
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   SHOWCASE EMBEDDED TABLE (OPTIONAL TOGGLE INSIDE SHOWCASE)
+   -------------------------------------------------------------------------- */
+.scada-table-view {
+  background: var(--scada-surface);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 24px;
+}
+
+.scada-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.scada-table thead {
+  background: #0b101c;
+  color: var(--scada-text-muted);
+  font-family: var(--font-scada-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.scada-table th, .scada-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--scada-border-subtle);
+}
+
+.scada-table tbody tr {
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.scada-table tbody tr:hover {
+  background: #151e33;
+}
+
+.scada-table tbody tr.row-crit {
+  background: rgba(239, 68, 68, 0.07);
+}
+
+.scada-table tbody tr.row-crit:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.scada-table .mono {
+  font-family: var(--font-scada-head);
+}
+
+/* --------------------------------------------------------------------------
+   GLOBAL DARK THEME OVERRIDES FOR SHOWCASE MODE
+   -------------------------------------------------------------------------- */
+body.mode-showcase {
+  background-color: var(--scada-bg) !important;
+  color: var(--scada-text) !important;
+}
+
+body.mode-showcase .app {
+  background-color: var(--scada-bg) !important;
+}
+
+body.mode-showcase .main {
+  background-color: var(--scada-bg) !important;
+}
+
+body.mode-showcase .content {
+  background-color: var(--scada-bg) !important;
+}
+
+body.mode-showcase .topbar {
+  background: rgba(12, 18, 32, 0.95) !important;
+  border-bottom: 1px solid var(--scada-border) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+body.mode-showcase .topbar-title {
+  color: #f8fafc !important;
+  font-family: var(--font-scada-head) !important;
+  font-weight: 700 !important;
+}
+
+body.mode-showcase .sidebar {
+  background: #090d17 !important;
+  border-right: 1px solid var(--scada-border) !important;
+}
+
+body.mode-showcase .sidebar-brand {
+  background: #0b101c !important;
+  border-bottom: 1px solid var(--scada-border) !important;
+}
+
+body.mode-showcase .brand-text {
+  font-family: var(--font-scada-head) !important;
+  color: var(--scada-cyan) !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 12px rgba(76, 215, 246, 0.45) !important;
+}
+
+body.mode-showcase .nav-item {
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .nav-item:hover {
+  background: #131b2e !important;
+  color: #ffffff !important;
+}
+
+body.mode-showcase .nav-item.active {
+  background: rgba(6, 182, 212, 0.15) !important;
+  color: var(--scada-cyan) !important;
+  border-left-color: var(--scada-cyan) !important;
+}
+
+body.mode-showcase .user-chip {
+  background: #131b2e !important;
+  border: 1px solid var(--scada-border) !important;
+  color: #f1f5f9 !important;
+}
+
+body.mode-showcase .icon-btn {
+  background: #131b2e !important;
+  border: 1px solid var(--scada-border) !important;
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .icon-btn:hover {
+  color: var(--scada-cyan) !important;
+  border-color: var(--scada-cyan) !important;
+}
+
+body.mode-showcase .btn-sync-now {
+  background: #131b2e !important;
+  border: 1px solid var(--scada-border) !important;
+  color: var(--scada-cyan) !important;
+}
+
+body.mode-showcase .btn-sync-now:hover {
+  background: #1b2640 !important;
+  border-color: var(--scada-cyan) !important;
+}
+
+/* --------------------------------------------------------------------------
+   GIS MAP RADAR VIEW STYLES (#view-gis)
+   -------------------------------------------------------------------------- */
+.gis-nav-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #00a572, #4edea3);
+  color: #002113;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  letter-spacing: 0.05em;
+  vertical-align: middle;
+  box-shadow: 0 0 8px rgba(78, 222, 163, 0.4);
+}
+
+.gis-command-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--scada-surface);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.gis-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gis-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10.5px;
+  font-family: var(--font-scada-head);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--scada-text-muted);
+  text-transform: uppercase;
+}
+
+.gis-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.gis-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.gis-status-pill.pill-loss {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.gis-status-label {
+  font-size: 11px;
+  color: var(--scada-text-muted);
+  font-family: var(--font-scada-head);
+  letter-spacing: 0.04em;
+}
+
+.gis-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: var(--scada-surface);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+}
+
+.gis-search-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  flex: 1;
+  min-width: 240px;
+  max-width: 400px;
+}
+
+.gis-search-wrap input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.gis-search-wrap input::placeholder {
+  color: var(--scada-text-dim);
+}
+
+.gis-mode-toggle {
+  display: inline-flex;
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 4px;
+}
+
+.gis-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--scada-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.gis-toggle-btn:hover {
+  color: #ffffff;
+}
+
+.gis-toggle-btn.active {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+.gis-region-filters {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.gis-filter-chip {
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  color: var(--scada-text-muted);
+  font-size: 11.5px;
+  font-family: var(--font-scada-head);
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.gis-filter-chip:hover {
+  color: #ffffff;
+  border-color: #3b82f6;
+}
+
+.gis-filter-chip.active {
+  background: var(--scada-cyan-container);
+  color: #003640;
+  border-color: var(--scada-cyan);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+}
+
+.gis-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .gis-layout-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gis-main-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.gis-sidebar-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gis-map-viewport {
+  position: relative;
+  background: #0a0e18;
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.gis-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(rgba(76, 215, 246, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.gis-radar-sweep {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(from 0deg, transparent 0deg 300deg, rgba(76, 215, 246, 0.15) 360deg);
+  animation: spinRadar 16s linear infinite;
+  z-index: 2;
+}
+
+@keyframes spinRadar {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.gis-hud-top-left {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.gis-coord-badge {
+  background: rgba(16, 23, 40, 0.85);
+  border: 1px solid var(--scada-border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: var(--font-scada-head);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ffffff;
+  backdrop-filter: blur(8px);
+  display: inline-flex;
+  gap: 8px;
+}
+
+.gis-coord-sub {
+  font-size: 10px;
+  color: var(--scada-text-dim);
+  font-family: var(--font-scada-head);
+}
+
+.gis-compass-hud {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10;
+  width: 36px;
+  height: 36px;
+  background: rgba(16, 23, 40, 0.85);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--scada-cyan);
+  font-family: var(--font-scada-head);
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.gis-zoom-controls {
+  position: absolute;
+  top: 56px;
+  right: 14px;
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  background: rgba(16, 23, 40, 0.9);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+}
+
+.gis-zoom-btn {
+  width: 36px;
+  height: 34px;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--scada-border-subtle);
+  color: #e2e8f0;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.gis-zoom-btn:last-child {
+  border-bottom: none;
+  font-size: 13px;
+}
+
+.gis-zoom-btn:hover {
+  background: rgba(76, 215, 246, 0.2);
+  color: var(--scada-cyan);
+}
+
+.gis-zoom-btn:active {
+  transform: scale(0.92);
+}
+
+.gis-hud-tip {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  z-index: 10;
+  background: rgba(16, 23, 40, 0.8);
+  border: 1px solid var(--scada-border-subtle);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 10px;
+  color: var(--scada-text-muted);
+  backdrop-filter: blur(6px);
+  pointer-events: none;
+}
+
+.gis-vector-view {
+  width: 100%;
+  height: 100%;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 3;
+  padding: 10px;
+  overflow: hidden;
+  user-select: none;
+}
+
+.gis-vector-svg {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 740px;
+  cursor: grab;
+  filter: drop-shadow(0 0 25px rgba(76, 215, 246, 0.15));
+  touch-action: none;
+}
+
+.gis-vector-svg.is-panning {
+  cursor: grabbing;
+}
+
+.gis-node {
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.gis-pin-label,
+.gis-pin-status,
+.gis-region-watermark,
+.gis-water-label {
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
+}
+
+.gis-node:hover {
+  filter: brightness(1.4) drop-shadow(0 0 8px rgba(76, 215, 246, 0.8));
+}
+
+.gis-node.is-active {
+  filter: drop-shadow(0 0 12px rgba(76, 215, 246, 1)) brightness(1.35);
+}
+
+.gis-ping-circle {
+  animation: gisPulse 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  transform-origin: center;
+}
+
+@keyframes gisPulse {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  70% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+.gis-tactical-card {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 20;
+  width: 330px;
+  background: rgba(16, 23, 40, 0.94);
+  border: 1px solid var(--scada-border);
+  border-radius: 12px;
+  padding: 14px;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(6, 182, 212, 0.15);
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .gis-tactical-card {
+    position: static;
+    width: 100%;
+    margin-top: 12px;
+  }
+}
+
+.gis-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-scada-head);
+}
+
+.gis-card-status-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fca5a5;
+}
+
+.gis-card-coords {
+  font-size: 10px;
+  color: var(--scada-text-dim);
+}
+
+.gis-card-site-id {
+  margin: 0;
+  font-family: var(--font-scada-head);
+  font-size: 16px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.gis-card-site-name {
+  margin: 2px 0 0 0;
+  font-size: 11px;
+  color: var(--scada-text-muted);
+}
+
+.gis-telemetry-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+  background: #0b101c;
+  border-radius: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--scada-border-subtle);
+}
+
+.gis-telemetry-mini-grid .mini-kpi {
+  display: flex;
+  flex-direction: column;
+}
+
+.gis-telemetry-mini-grid .lbl {
+  font-size: 10px;
+  color: var(--scada-text-dim);
+}
+
+.gis-telemetry-mini-grid .val {
+  font-family: var(--font-scada-head);
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.gis-weather-row {
+  font-size: 11px;
+  color: var(--scada-text-muted);
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--scada-border-subtle);
+}
+
+.gis-card-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.btn-gis-action-deepdive {
+  width: 100%;
+  height: 38px;
+  background: linear-gradient(135deg, #131c31 0%, #17223b 100%);
+  border: 1px solid rgba(76, 215, 246, 0.4);
+  border-radius: 8px;
+  color: var(--scada-cyan);
+  font-family: var(--font-scada-head);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-gis-action-deepdive:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+  border-color: var(--scada-cyan);
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.5);
+  transform: translateY(-1px);
+}
+
+.gis-hud-legend {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 10;
+  background: rgba(16, 23, 40, 0.9);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 210px;
+}
+
+@media (max-width: 600px) {
+  .gis-hud-legend {
+    display: none;
+  }
+}
+
+.gis-hud-legend .legend-title {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--scada-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.gis-hud-legend .legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: #e2e8f0;
+}
+
+.gis-drone-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .gis-drone-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.drone-card {
+  background: var(--scada-surface);
+  border: 1px solid var(--scada-border);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.drone-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  border: 1px solid var(--scada-border);
+}
+
+.drone-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.drone-tag {
+  font-size: 10px;
+  font-weight: 700;
+  font-family: var(--font-scada-head);
+  text-transform: uppercase;
+}
+
+.drone-title {
+  font-family: var(--font-scada-head);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 1px;
+}
+
+.drone-time {
+  font-size: 10.5px;
+  color: var(--scada-text-dim);
+}
+
+.regional-cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.region-card {
+  background: var(--scada-bg);
+  border: 1px solid var(--scada-border);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.region-card:hover {
+  background: #131b2e;
+  border-color: rgba(76, 215, 246, 0.5);
+  transform: translateX(2px);
+}
+
+.region-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.region-site-count {
+  font-family: var(--font-scada-head);
+  font-size: 10px;
+  font-weight: 700;
+  background: #17223b;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--scada-cyan);
+}
+
+.region-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.region-stats-grid .lbl {
+  color: var(--scada-text-dim);
+  display: block;
+}
+
+.region-stats-grid .val {
+  font-family: var(--font-scada-head);
+  font-weight: 700;
+  margin-top: 1px;
+  display: block;
+}
+
+/* --------------------------------------------------------------------------
+   DARK THEME OVERRIDES FOR SITE DEEP-DIVE & OTHER VIEWS IN SHOWCASE MODE
+   -------------------------------------------------------------------------- */
+body.mode-showcase #view-deepdive,
+body.mode-showcase #view-analytics,
+body.mode-showcase #view-settings {
+  color: var(--scada-text) !important;
+}
+
+body.mode-showcase #view-deepdive .view-title,
+body.mode-showcase #view-analytics .view-title,
+body.mode-showcase #view-settings .view-title {
+  color: #ffffff !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .site-select,
+body.mode-showcase .small-select,
+body.mode-showcase .field-select,
+body.mode-showcase .field-text {
+  background-color: var(--scada-surface) !important;
+  border: 1px solid var(--scada-border) !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+}
+
+body.mode-showcase .site-select option,
+body.mode-showcase .small-select option,
+body.mode-showcase .field-select option {
+  background-color: #0d1322 !important;
+  color: #ffffff !important;
+}
+
+body.mode-showcase .tabs {
+  border-bottom-color: var(--scada-border) !important;
+}
+
+body.mode-showcase .tab-btn {
+  color: var(--scada-text-muted) !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .tab-btn:hover {
+  color: #ffffff !important;
+}
+
+body.mode-showcase .tab-btn.active {
+  color: var(--scada-cyan) !important;
+  border-bottom-color: var(--scada-cyan) !important;
+  text-shadow: 0 0 10px rgba(76, 215, 246, 0.4) !important;
+}
+
+body.mode-showcase .panel {
+  background: var(--scada-surface) !important;
+  border: 1px solid var(--scada-border) !important;
+  border-radius: 12px !important;
+  color: var(--scada-text) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+body.mode-showcase .panel h2 {
+  color: #ffffff !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .advisor-card {
+  background: var(--scada-card) !important;
+  border: 1px solid var(--scada-border) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+body.mode-showcase .advisor-label {
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .advisor-value {
+  color: #ffffff !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .advisor-sub {
+  color: var(--scada-text-dim) !important;
+}
+
+body.mode-showcase #adv7d,
+body.mode-showcase #adv30d {
+  color: var(--scada-amber) !important;
+}
+
+body.mode-showcase #advCost {
+  color: #ffffff !important;
+}
+
+body.mode-showcase #advNet {
+  color: var(--scada-emerald) !important;
+  text-shadow: 0 0 10px rgba(78, 222, 163, 0.3) !important;
+}
+
+body.mode-showcase .advisor-badge {
+  background: #1b2640 !important;
+  color: var(--scada-cyan) !important;
+  border: 1px solid var(--scada-border) !important;
+}
+
+body.mode-showcase .advisor-badge.green {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: var(--scada-emerald) !important;
+  border-color: rgba(78, 222, 163, 0.4) !important;
+}
+
+body.mode-showcase .advisor-badge.red {
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #fca5a5 !important;
+  border-color: rgba(239, 68, 68, 0.4) !important;
+}
+
+body.mode-showcase .advisor-alert.advisor-green {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(78, 222, 163, 0.35) !important;
+  color: var(--scada-emerald) !important;
+}
+
+body.mode-showcase .advisor-alert.advisor-red {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+  color: #fca5a5 !important;
+}
+
+body.mode-showcase .advisor-alert.advisor-amber {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(255, 185, 95, 0.35) !important;
+  color: var(--scada-amber) !important;
+}
+
+body.mode-showcase .stack-card {
+  border: 1px solid var(--scada-border) !important;
+  border-radius: 10px !important;
+}
+
+body.mode-showcase .stack-card.green {
+  background: rgba(16, 185, 129, 0.1) !important;
+  border-color: rgba(78, 222, 163, 0.3) !important;
+}
+
+body.mode-showcase .stack-card.green .metric-value {
+  color: var(--scada-emerald) !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .stack-card.amber {
+  background: rgba(245, 158, 11, 0.1) !important;
+  border-color: rgba(255, 185, 95, 0.3) !important;
+}
+
+body.mode-showcase .stack-card.amber .metric-value {
+  color: var(--scada-amber) !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .stack-card.red {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+body.mode-showcase .stack-card.red .metric-value {
+  color: #fca5a5 !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .gauge-value {
+  color: #ffffff !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .gauge-status {
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .soiling-meta {
+  color: var(--scada-text) !important;
+}
+
+body.mode-showcase .soiling-meta strong {
+  color: #ffffff !important;
+}
+
+body.mode-showcase .advice {
+  border-top-color: var(--scada-border) !important;
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .fleet-table th {
+  background: #0b101c !important;
+  border-bottom: 1px solid var(--scada-border) !important;
+  color: var(--scada-text-muted) !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .fleet-table td {
+  border-bottom: 1px solid rgba(34, 47, 70, 0.5) !important;
+  color: #e2e8f0 !important;
+}
+
+body.mode-showcase .fleet-table tbody tr:hover {
+  background: #151e33 !important;
+}
+
+body.mode-showcase .fleet-table tbody tr.row-warning {
+  background: rgba(245, 158, 11, 0.08) !important;
+}
+
+body.mode-showcase .fleet-table tbody tr.row-critical {
+  background: rgba(239, 68, 68, 0.12) !important;
+}
+
+body.mode-showcase .setting-row {
+  border-bottom: 1px solid var(--scada-border) !important;
+}
+
+body.mode-showcase .setting-row span:first-child {
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .setting-row span:last-child {
+  color: var(--scada-cyan) !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .modal-dialog {
+  background: var(--scada-surface) !important;
+  border: 1px solid var(--scada-border) !important;
+  color: var(--scada-text) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+body.mode-showcase .modal-header {
+  border-bottom: 1px solid var(--scada-border) !important;
+  color: #ffffff !important;
+}
+
+body.mode-showcase .modal-header h3 {
+  color: #ffffff !important;
+  font-family: var(--font-scada-head) !important;
+}
+
+body.mode-showcase .modal-close {
+  color: var(--scada-text-muted) !important;
+}
+
+body.mode-showcase .modal-close:hover {
+  color: #ffffff !important;
+}
+
+body.mode-showcase .modal-footer {
+  border-top: 1px solid var(--scada-border) !important;
+}
+
+body.mode-showcase .inline-edit-box {
+  background: var(--scada-card) !important;
+  border: 1px solid var(--scada-border) !important;
+  color: #ffffff !important;
+}
+
+body.mode-showcase .inline-edit-box input {
+  background: #0a0e18 !important;
+  border: 1px solid var(--scada-border) !important;
+  color: #ffffff !important;
+}

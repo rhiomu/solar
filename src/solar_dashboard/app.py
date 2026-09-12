@@ -410,6 +410,7 @@ async def get_history_daily(days: int = 7, site_id: Optional[str] = None) -> Lis
     return enriched
 
 
+@app.get("/api/analytics-monthly")
 @app.get("/api/history-monthly")
 async def get_history_monthly(months: int = 12, site_id: Optional[str] = None) -> List[Dict[str, Any]]:
     """Retrieve historical monthly records from local DB enriched with active feed-in tariff."""

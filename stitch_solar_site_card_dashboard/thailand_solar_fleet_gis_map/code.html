@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="th"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Space+Grotesk:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-secondary-fixed-variant":"#005236","secondary-fixed":"#6ffbbe","error":"#ffb4ab","on-tertiary-fixed-variant":"#653e00","surface-dim":"#0f131d","on-secondary-fixed":"#002113","primary":"#4cd7f6","on-primary":"#003640","surface-container-high":"#262a35","inverse-on-surface":"#2c303b","tertiary-container":"#e79400","on-error-container":"#ffdad6","on-primary-fixed-variant":"#004e5c","surface-container-lowest":"#0a0e18","on-tertiary":"#472a00","on-primary-container":"#00424f","secondary-fixed-dim":"#4edea3","inverse-surface":"#dfe2f1","surface-bright":"#353944","surface-variant":"#313540","background":"#0f131d","surface-container":"#1c1f2a","tertiary-fixed-dim":"#ffb95f","on-primary-fixed":"#001f26","on-surface":"#dfe2f1","on-surface-variant":"#bcc9cd","surface-container-highest":"#313540","tertiary":"#ffb95f","secondary":"#4edea3","inverse-primary":"#00687a","surface":"#0f131d","primary-fixed":"#acedff","primary-container":"#06b6d4","on-tertiary-fixed":"#2a1700","on-secondary-container":"#00311f","surface-container-low":"#171b26","on-background":"#dfe2f1","on-secondary":"#003824","outline-variant":"#3d494c","outline":"#869397","on-tertiary-container":"#563400","error-container":"#93000a","primary-fixed-dim":"#4cd7f6","surface-tint":"#4cd7f6","secondary-container":"#00a572","tertiary-fixed":"#ffddb8","on-error":"#690005"},borderRadius:{DEFAULT:"0.125rem",lg:"0.25rem",xl:"0.5rem",full:"0.75rem"},spacing:{"gutter-lg":"1.5rem","space-lg":"1.25rem","margin-sm":"0.75rem",gutter:"1rem","margin-lg":"2rem","space-sm":"0.5rem","space-xs":"0.25rem","space-xl":"2rem",margin:"1.5rem","gutter-sm":"0.5rem","space-md":"0.75rem"},fontFamily:{"headline-lg-mobile":["Space Grotesk"],"headline-xl":["Space Grotesk"],"body-sm":["Inter"],"headline-lg":["Space Grotesk"],"title-lg":["Space Grotesk"],"label-sm":["Space Grotesk"],"body-md":["Inter"],"headline-xl-mobile":["Space Grotesk"],"label-md":["Space Grotesk"],"headline-md":["Space Grotesk"],"body-lg":["Inter"],"label-telemetry":["Space Grotesk"],"title-md":["Space Grotesk"]},fontSize:{"headline-lg-mobile":["24px",{lineHeight:"32px",letterSpacing:"0em",fontWeight:"600"}],"headline-xl":["40px",{lineHeight:"48px",letterSpacing:"-0.02em",fontWeight:"700"}],"body-sm":["11px",{lineHeight:"16px",fontWeight:"400"}],"headline-lg":["32px",{lineHeight:"40px",letterSpacing:"-0.01em",fontWeight:"600"}],"title-lg":["18px",{lineHeight:"24px",letterSpacing:"0.01em",fontWeight:"600"}],"label-sm":["10px",{lineHeight:"14px",letterSpacing:"0.08em",fontWeight:"700"}],"body-md":["13px",{lineHeight:"18px",fontWeight:"400"}],"headline-xl-mobile":["28px",{lineHeight:"36px",letterSpacing:"-0.01em",fontWeight:"700"}],"label-md":["12px",{lineHeight:"16px",letterSpacing:"0.06em",fontWeight:"600"}],"headline-md":["22px",{lineHeight:"28px",fontWeight:"600"}],"body-lg":["15px",{lineHeight:"22px",fontWeight:"400"}],"label-telemetry":["24px",{lineHeight:"28px",letterSpacing:"-0.03em",fontWeight:"700"}],"title-md":["15px",{lineHeight:"20px",letterSpacing:"0.02em",fontWeight:"500"}]}}}}</script></head><body class="bg-surface-container-lowest font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low/95 backdrop-blur-xl z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.3)]"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between bg-surface-container-lowest/80"><div class="flex items-center gap-space-sm"><div class="w-7 h-7 rounded bg-primary-container/20 flex items-center justify-center"><span class="material-symbols-outlined text-primary text-[18px]">solar_power</span></div><div class="flex flex-col"><span class="font-title-md text-title-md tracking-wider uppercase text-on-surface leading-tight">HELIOS OS</span><span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">SCADA CORE v4.8</span></div></div><div class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_10px_rgba(78,222,163,0.8)]"></div></div><div class="px-space-md py-space-sm"><span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">NAVIGATION SYSTEMS</span></div><nav class="flex flex-col gap-space-xs px-space-sm" data-active-classes="bg-primary-container text-on-primary font-title-md"><a class="group flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="fleet-overview" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-title-md text-title-md">ภาพรวมระบบ</span></div><span class="font-label-sm text-label-sm uppercase text-outline group-hover:text-on-surface-variant">01</span></a><a aria-current="page" class="group flex items-center justify-between px-space-md py-space-sm rounded transition-colors bg-primary-container text-on-primary font-title-md" data-path="gis-map" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">public</span><span class="font-title-md text-title-md">แผนที่ดาวเทียม / ไซต์</span></div><span class="font-label-sm text-label-sm px-space-xs py-0.5 rounded bg-secondary-container text-on-surface uppercase">NEW</span></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="site-deep-dive" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">tune</span><span class="font-title-md text-title-md">วิเคราะห์รายไซต์</span></div><span class="font-label-sm text-label-sm uppercase text-outline group-hover:text-on-surface-variant">03</span></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="fleet-analytics" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">analytics</span><span class="font-title-md text-title-md">สถิติและแนวโน้ม</span></div><span class="font-label-sm text-label-sm uppercase text-outline group-hover:text-on-surface-variant">04</span></a><a class="group flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="settings" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-title-md text-title-md">ตั้งค่าระบบ</span></div><span class="font-label-sm text-label-sm uppercase text-outline group-hover:text-on-surface-variant">05</span></a></nav></div><div class="p-space-md m-space-sm bg-surface-container-lowest/90 rounded"><div class="flex items-center justify-between pb-space-xs"><span class="font-label-sm text-label-sm text-outline uppercase tracking-wider">GRID TELEMETRY</span><span class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_8px_rgba(76,215,246,0.9)] animate-pulse"></span></div><div class="flex flex-col gap-space-xs pt-space-xs"><div class="flex items-baseline justify-between"><span class="font-body-sm text-body-sm text-on-surface-variant">EXPORT FLOW</span><span class="font-label-telemetry text-label-telemetry text-primary">4.2 <span class="font-label-sm text-label-sm text-on-surface-variant">MW</span></span></div><div class="flex items-baseline justify-between"><span class="font-body-sm text-body-sm text-on-surface-variant">SOLAR FLUX</span><span class="font-title-lg text-title-lg text-secondary">682 <span class="font-label-sm text-label-sm text-on-surface-variant">W/m²</span></span></div></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-low/90 backdrop-blur-xl z-40 flex items-center justify-between px-space-lg shadow-[0_1px_8px_rgba(0,0,0,0.25)]"><div class="flex items-center gap-space-md"><div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-high rounded text-on-surface"><span class="w-2 h-2 rounded-full bg-secondary shadow-[0_0_8px_rgba(78,222,163,0.8)]"></span><span class="font-label-sm text-label-sm tracking-wide text-secondary uppercase">GATEWAY 99.98% OK</span></div><div class="flex items-center gap-space-xs bg-surface-container-highest/60 hover:bg-surface-container-highest px-space-md py-1.5 rounded cursor-pointer transition-colors"><span class="material-symbols-outlined text-primary text-[18px]">my_location</span><span class="font-title-md text-title-md text-on-surface">กลุ่ม G1 (เขตปทุมธานีและภาคกลาง)</span><span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span></div></div><div class="flex items-center gap-space-lg"><div class="hidden xl:flex items-center gap-space-sm"><div class="flex items-center gap-space-xs px-space-sm py-1 rounded bg-secondary-container/20 text-secondary"><span class="material-symbols-outlined text-[15px] animate-spin">sync</span><span class="font-label-sm text-label-sm uppercase font-semibold">ONLINE ซิงค์ข้อมูล REAL-TIME</span></div><div class="px-space-sm py-1 rounded bg-surface-container-high text-on-surface"><span class="font-label-sm text-label-sm text-on-surface-variant mr-1">FIT RATE:</span><span class="font-title-md text-title-md text-tertiary">2.20 THB/kWh</span></div></div><div class="flex items-center gap-space-md"><button class="w-9 h-9 flex items-center justify-center rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span></button><button class="w-9 h-9 flex items-center justify-center rounded bg-surface-container-high hover:bg-surface-container-highest text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">help</span></button><div class="flex items-center gap-space-sm pl-space-xs"><div class="flex flex-col text-right"><span class="font-title-md text-title-md text-on-surface leading-none">Phornหมอnee (ป่าน)</span><span class="font-label-sm text-label-sm text-primary uppercase tracking-wider">PLANT CHIEF ENGINEER</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="relative pt-16 w-full min-h-screen bg-surface-container-lowest"><div class="flex flex-col w-full">
+<!-- Top Command Toolbar & Subheader -->
+<header class="w-full bg-surface-container-low/95 px-space-lg py-space-md shadow-md backdrop-blur-xl flex flex-col gap-space-sm">
+<div class="flex flex-wrap items-center justify-between gap-space-md">
+<!-- Breadcrumb / System Identifier -->
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-sm uppercase tracking-wider">
+<span class="text-primary">HELIOS GIS</span>
+<span>/</span>
+<span>GEOSPATIAL SCADA TELEMETRY</span>
+<span>/</span>
+<span class="text-on-surface font-semibold">THAILAND REGIONAL FLEET</span>
+</div>
+<div class="flex items-center gap-space-sm mt-0.5">
+<span class="material-symbols-outlined text-primary text-[22px]">satellite_alt</span>
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">แผนที่ภาพรวมสถานะ Fleet ทั่วประเทศไทย (Thailand Solar GIS Radar)</h1>
+</div>
+</div>
+<!-- Live GPS Health & Telemetry Status -->
+<div class="flex items-center gap-space-md">
+<div class="flex items-center gap-space-sm px-space-md py-1.5 rounded bg-surface-container-high">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary shadow-[0_0_12px_rgba(78,222,163,0.9)] animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface uppercase tracking-wider">GPS Telemetry Sync:</span>
+<span class="font-title-md text-title-md text-secondary font-bold">10/10 ONLINE</span>
+</div>
+<div class="hidden lg:flex items-center gap-space-xs px-space-sm py-1.5 rounded bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-tertiary text-[18px]">wb_sunny</span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase">AVG IRRADIANCE: <span class="text-on-surface font-semibold">824 W/m²</span></span>
+</div>
+<div class="flex items-center gap-space-xs px-space-sm py-1.5 rounded bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-error text-[18px]">currency_exchange</span>
+<span class="font-label-sm text-label-sm text-on-surface uppercase">EST. FLEET LOSS: <span class="text-error font-bold font-title-md">฿2,780/วัน</span></span>
+</div>
+</div>
+</div>
+<!-- Quick Search, Map Layer Toggles, Region Filter Pills -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs">
+<!-- Search & Filters -->
+<div class="flex flex-wrap items-center gap-space-sm flex-1 max-w-2xl">
+<div class="relative flex-1 min-w-[240px]">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full bg-surface-container-lowest text-on-surface font-body-md pl-9 pr-space-md py-1.5 rounded focus:outline-none focus:bg-surface-container placeholder:text-outline text-body-md" id="siteSearchInput" placeholder="ค้นหารหัสไซต์, จังหวัด หรือชื่อโรงงาน (เช่น Saraburi, SOLAR-04)..." type="text"/>
+</div>
+<!-- Layer Toggles -->
+<div class="flex items-center bg-surface-container rounded p-0.5">
+<button class="px-space-sm py-1 rounded bg-primary-container text-on-primary font-label-sm tracking-wide uppercase transition-all flex items-center gap-1 shadow-sm" id="btnLayerSat" type="button">
+<span class="material-symbols-outlined text-[14px]">public</span>
+<span>ดาวเทียม</span>
+</button>
+<button class="px-space-sm py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm tracking-wide uppercase transition-all flex items-center gap-1" id="btnLayerFlux" type="button">
+<span class="material-symbols-outlined text-[14px]">solar_power</span>
+<span>เรดาร์แสงแดด</span>
+</button>
+<button class="px-space-sm py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm tracking-wide uppercase transition-all flex items-center gap-1" id="btnLayerSoiling" type="button">
+<span class="material-symbols-outlined text-[14px]">blur_on</span>
+<span>ฝุ่น / Soiling</span>
+</button>
+</div>
+</div>
+<!-- Regional Filter Chips -->
+<div class="flex items-center gap-1 overflow-x-auto py-0.5">
+<button class="px-space-sm py-1 rounded bg-primary text-on-primary font-label-sm tracking-wider uppercase whitespace-nowrap shadow-sm">
+          ทุกภาค (10 ไซต์)
+        </button>
+<button class="px-space-sm py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm tracking-wider uppercase whitespace-nowrap transition-colors">
+          ภาคกลาง & กทม. (5)
+        </button>
+<button class="px-space-sm py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm tracking-wider uppercase whitespace-nowrap transition-colors">
+          ภาคตะวันออก (2)
+        </button>
+<button class="px-space-sm py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm tracking-wider uppercase whitespace-nowrap transition-colors">
+          ภาคอีสาน (1)
+        </button>
+<button class="px-space-sm py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-sm tracking-wider uppercase whitespace-nowrap transition-colors">
+          ภาคเหนือ (1)
+        </button>
+</div>
+</div>
+</header>
+<!-- Main Content Grid: Vector Tactical Radar Map + Tactical Inspector Sidebar -->
+<div class="w-full p-space-md grid grid-cols-1 xl:grid-cols-12 gap-space-md">
+<!-- LEFT & CENTER (Cols 1-8): Thailand Interactive Vector SCADA Map -->
+<div class="xl:col-span-8 flex flex-col gap-space-md">
+<!-- Tactical Map Viewport -->
+<div class="relative w-full h-[760px] bg-surface-container-lowest rounded-xl overflow-hidden shadow-2xl flex items-center justify-center select-none">
+<!-- Ambient Grid Background with Radial Lighting Overlay -->
+<div class="absolute inset-0 bg-[radial-gradient(#1c2538_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-container-lowest via-surface-container-lowest/70 to-primary/10 pointer-events-none"></div>
+<!-- Tactical HUD Coordinates & Header Overlays -->
+<div class="absolute top-space-md left-space-md z-20 flex flex-col gap-1 pointer-events-none">
+<div class="flex items-center gap-space-xs bg-surface-container-low/80 backdrop-blur-md px-space-sm py-1 rounded text-on-surface-variant shadow-sm">
+<span class="material-symbols-outlined text-primary text-[16px]">grid_4x4</span>
+<span class="font-label-sm text-label-sm text-primary tracking-widest uppercase">COORD RANGE: 5.61° N ~ 20.46° N | 97.34° E ~ 105.63° E</span>
+</div>
+<div class="flex items-center gap-space-sm text-body-sm text-outline">
+<span>PROJECTION: WGS84 // MERCATOR</span>
+<span>•</span>
+<span class="text-secondary font-semibold">RADAR ACTIVE SWEEP: 12 SEC</span>
+</div>
+</div>
+<!-- Radar Sweep Conical Light Effect -->
+<div class="absolute w-[900px] h-[900px] rounded-full pointer-events-none opacity-20 animate-[spin_20s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0_300deg,rgba(76,215,246,0.3)_360deg)]"></div>
+<!-- Coordinate Lat/Long Axis Guides -->
+<div class="absolute inset-0 pointer-events-none flex flex-col justify-between p-space-sm text-outline font-label-sm opacity-40">
+<div class="flex justify-between"><span>20°00'N (Chiang Rai)</span><span>105°00'E</span></div>
+<div class="flex justify-between"><span>15°00'N (Nakhon Ratchasima)</span><span>102°00'E</span></div>
+<div class="flex justify-between"><span>13°45'N (Bangkok Fleet Center)</span><span>100°30'E</span></div>
+<div class="flex justify-between"><span>07°00'N (Songkhla Maritime)</span><span>098°00'E</span></div>
+</div>
+<!-- Map Controls & Compass (Top Right) -->
+<div class="absolute top-space-md right-space-md z-20 flex flex-col gap-space-xs">
+<div class="bg-surface-container-high/90 backdrop-blur-md rounded p-1 flex flex-col items-center gap-1 shadow-lg">
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-bright text-on-surface transition-colors" title="Zoom In">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+<div class="w-5 h-[1px] bg-outline-variant"></div>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-bright text-on-surface transition-colors" title="Zoom Out">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<div class="w-5 h-[1px] bg-outline-variant"></div>
+<button class="w-8 h-8 flex items-center justify-center rounded hover:bg-surface-bright text-primary transition-colors" title="Reset View">
+<span class="material-symbols-outlined text-[18px]">my_location</span>
+</button>
+</div>
+<!-- Compass rose HUD -->
+<div class="w-10 h-10 rounded bg-surface-container-high/80 backdrop-blur-md flex items-center justify-center text-primary shadow-md">
+<span class="font-label-sm text-label-sm font-bold tracking-tighter">N ▲</span>
+</div>
+</div>
+<!-- SVG Map of Thailand with Regional Polygons and Geometric SCADA Grid -->
+<svg class="w-full h-full max-w-[680px] max-h-[820px] drop-shadow-[0_0_25px_rgba(76,215,246,0.12)]" viewbox="0 0 700 860">
+<!-- Definitions for Neon Glows & Patterns -->
+<defs>
+<radialgradient cx="50%" cy="50%" id="regionGlowCentral" r="50%">
+<stop offset="0%" stop-color="#4cd7f6" stop-opacity="0.18"></stop>
+<stop offset="100%" stop-color="#4cd7f6" stop-opacity="0"></stop>
+</radialgradient>
+<radialgradient cx="50%" cy="50%" id="regionGlowEast" r="50%">
+<stop offset="0%" stop-color="#ffb95f" stop-opacity="0.15"></stop>
+<stop offset="100%" stop-color="#ffb95f" stop-opacity="0"></stop>
+</radialgradient>
+<filter height="140%" id="neonGlowRed" width="140%" x="-20%" y="-20%">
+<fedropshadow dx="0" dy="0" flood-color="#ff5449" flood-opacity="0.9" stddeviation="6"></fedropshadow>
+</filter>
+<filter height="140%" id="neonGlowEmerald" width="140%" x="-20%" y="-20%">
+<fedropshadow dx="0" dy="0" flood-color="#4edea3" flood-opacity="0.9" stddeviation="6"></fedropshadow>
+</filter>
+<filter height="140%" id="neonGlowAmber" width="140%" x="-20%" y="-20%">
+<fedropshadow dx="0" dy="0" flood-color="#ffb95f" flood-opacity="0.9" stddeviation="6"></fedropshadow>
+</filter>
+</defs>
+<!-- Thailand Regional Base Vector Silhouettes (SCADA High-Tech Geometry) -->
+<!-- 1. Northern Region (ภาคเหนือ) -->
+<polygon class="hover:fill-surface-container-high transition-colors cursor-pointer" fill="#171b26" points="210,60 310,80 340,160 300,240 220,250 170,180 190,110" stroke="#313540" stroke-width="1.5"></polygon>
+<text fill="#869397" font-family="Space Grotesk" font-size="10" letter-spacing="2" opacity="0.6" x="235" y="150">NORTH // CM-REG</text>
+<!-- 2. Northeastern Region (ภาคอีสาน) -->
+<polygon class="hover:fill-surface-container-high transition-colors cursor-pointer" fill="#171b26" points="340,165 470,150 540,220 530,330 420,380 340,320 320,230" stroke="#313540" stroke-width="1.5"></polygon>
+<text fill="#869397" font-family="Space Grotesk" font-size="10" letter-spacing="2" opacity="0.6" x="400" y="260">ISAN // KKN-ZONE</text>
+<!-- 3. Central & Chao Phraya Basin (ภาคกลางและปริมณฑล) -->
+<polygon class="hover:fill-surface-container transition-colors cursor-pointer" fill="#1c1f2a" points="220,255 330,240 345,345 370,440 280,470 230,420 210,320" stroke="#4cd7f6" stroke-opacity="0.5" stroke-width="1.5"></polygon>
+<circle cx="305" cy="425" fill="url(#regionGlowCentral)" pointer-events="none" r="85"></circle>
+<text fill="#4cd7f6" font-family="Space Grotesk" font-size="10" letter-spacing="2" opacity="0.8" x="245" y="380">CENTRAL SCADA HUB</text>
+<!-- 4. Eastern Region (ภาคตะวันออก - EEC) -->
+<polygon class="hover:fill-surface-container transition-colors cursor-pointer" fill="#1c1f2a" points="345,430 425,405 455,470 395,540 335,505 330,450" stroke="#ffb95f" stroke-opacity="0.4" stroke-width="1.5"></polygon>
+<circle cx="380" cy="470" fill="url(#regionGlowEast)" pointer-events="none" r="55"></circle>
+<text fill="#ffb95f" font-family="Space Grotesk" font-size="9" letter-spacing="1.5" opacity="0.8" x="360" y="475">EEC SOLAR CORRIDOR</text>
+<!-- 5. Western & Southern Peninsula (ภาคใต้และตะวันตก) -->
+<polygon class="hover:fill-surface-container-high transition-colors cursor-pointer" fill="#171b26" points="210,325 240,430 250,530 280,620 270,720 310,810 260,820 230,730 220,620 200,500 180,410" stroke="#313540" stroke-width="1.5"></polygon>
+<text fill="#869397" font-family="Space Grotesk" font-size="9" letter-spacing="2" opacity="0.6" x="230" y="660">SOUTHERN GRID</text>
+<!-- Gulf of Thailand Watermark Label -->
+<text fill="#004e5c" font-family="Space Grotesk" font-size="12" font-weight="bold" letter-spacing="4" x="330" y="585">GULF OF THAILAND</text>
+<!-- High-Tech Vector Connecting Trunk Lines between Central Hub and outlying plants -->
+<g opacity="0.35" stroke="#4cd7f6" stroke-dasharray="3,3" stroke-width="0.8">
+<line x1="305" x2="235" y1="425" y2="125"></line> <!-- Central to Chiang Mai -->
+<line x1="305" x2="430" y1="425" y2="245"></line> <!-- Central to Khon Kaen -->
+<line x1="305" x2="350" y1="425" y2="480"></line> <!-- Central to Chonburi/Rayong -->
+</g>
+<!-- ============================================== -->
+<!-- 10 SOLAR SITE PINS WITH INTERACTIVE ATTRIBUTES -->
+<!-- ============================================== -->
+<!-- 1. [ภาคเหนือ] SOLAR-CMI-08 (Chiang Mai Mountain Resort, เชียงใหม่) -->
+<g class="cursor-pointer group" transform="translate(235, 125)">
+<circle cx="0" cy="0" fill="#4edea3" fill-opacity="0.12" r="14"></circle>
+<circle cx="0" cy="0" fill="#4edea3" filter="url(#neonGlowEmerald)" r="5"></circle>
+<circle cx="0" cy="0" fill="#002113" r="2"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="11" font-weight="600" x="10" y="4">SOLAR-CMI-08</text>
+<text fill="#4edea3" font-family="Inter" font-size="9" x="10" y="16">Clean 3.0% • 280.4 kWp</text>
+</g>
+<!-- 2. [ภาคอีสาน] SOLAR-KKN-09 (Khon Kaen Distribution Hub, ขอนแก่น) -->
+<g class="cursor-pointer group" transform="translate(430, 245)">
+<circle cx="0" cy="0" fill="#ffb95f" fill-opacity="0.14" r="15"></circle>
+<circle cx="0" cy="0" fill="#ffb95f" filter="url(#neonGlowAmber)" r="5"></circle>
+<circle cx="0" cy="0" fill="#2a1700" r="2"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="11" font-weight="600" x="12" y="4">SOLAR-KKN-09</text>
+<text fill="#ffb95f" font-family="Inter" font-size="9" x="12" y="16">ฝุ่นสะสม 8.9% • 440 kWp</text>
+</g>
+<!-- 3. [ภาคกลาง - สระบุรี] SOLAR-SRI-10 (Saraburi Cement Solar Farm) - CRITICAL CALLOUT FOCUS -->
+<g class="cursor-pointer group" transform="translate(325, 375)">
+<!-- Pulsing rings -->
+<circle class="animate-ping" cx="0" cy="0" fill="#ff5449" fill-opacity="0.2" r="22"></circle>
+<circle cx="0" cy="0" fill="#ff5449" fill-opacity="0.3" r="14"></circle>
+<circle cx="0" cy="0" fill="#ff5449" filter="url(#neonGlowRed)" r="7"></circle>
+<circle cx="0" cy="0" fill="#ffffff" r="2.5"></circle>
+<!-- Pin Flag Tag -->
+<rect fill="#262a35" height="24" rx="3" stroke="#ff5449" stroke-width="1.2" width="115" x="14" y="-12"></rect>
+<text fill="#ffdad6" font-family="Space Grotesk" font-size="11" font-weight="bold" x="20" y="4">SOLAR-SRI-10 🔴</text>
+</g>
+<!-- 4. [ภาคกลาง - ปทุมธานี] SOLAR-PTT-04 (Pathum Thani Logistics Park) -->
+<g class="cursor-pointer group" transform="translate(300, 410)">
+<circle class="animate-pulse" cx="0" cy="0" fill="#ff5449" fill-opacity="0.2" r="18"></circle>
+<circle cx="0" cy="0" fill="#ff5449" filter="url(#neonGlowRed)" r="6"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="10" font-weight="600" text-anchor="end" x="-95" y="4">SOLAR-PTT-04</text>
+<text fill="#ffb4ab" font-family="Inter" font-size="9" text-anchor="end" x="-95" y="15">วิกฤต 14.5% (฿620/วัน)</text>
+</g>
+<!-- 5. [ภาคกลาง - อยุธยา] SOLAR-AYU-05 (Ayutthaya High-Tech Park) -->
+<g class="cursor-pointer group" transform="translate(295, 385)">
+<circle cx="0" cy="0" fill="#4edea3" filter="url(#neonGlowEmerald)" r="5"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="10" text-anchor="end" x="-12" y="-9">SOLAR-AYU-05</text>
+<text fill="#4edea3" font-family="Inter" font-size="8.5" text-anchor="end" x="-12" y="2">ปกติ 2.4% • 480 kWp</text>
+</g>
+<!-- 6. [ภาคกลาง - นครปฐม] SOLAR-NPT-07 (Nakhon Pathom Agro Processing) -->
+<g class="cursor-pointer group" transform="translate(265, 420)">
+<circle cx="0" cy="0" fill="#4edea3" filter="url(#neonGlowEmerald)" r="5"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="10" text-anchor="end" x="-10" y="14">SOLAR-NPT-07</text>
+<text fill="#4edea3" font-family="Inter" font-size="8.5" text-anchor="end" x="-10" y="25">สะอาด 1.8%</text>
+</g>
+<!-- 7. [กทม. & ปริมณฑล] SOLAR-BKK-01 (Bangkok Urban Factory Rooftop) -->
+<g class="cursor-pointer group" transform="translate(305, 435)">
+<circle cx="0" cy="0" fill="#ffb95f" filter="url(#neonGlowAmber)" r="5.5"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="10" font-weight="600" x="12" y="3">SOLAR-BKK-01</text>
+<text fill="#ffb95f" font-family="Inter" font-size="8.5" x="12" y="13">ฝุ่น 3.2% • 357 kWp</text>
+</g>
+<!-- 8. [กทม. & ปริมณฑล] SOLAR-SPK-06 (Samut Prakan Cold Storage) -->
+<g class="cursor-pointer group" transform="translate(315, 452)">
+<circle cx="0" cy="0" fill="#ffb95f" filter="url(#neonGlowAmber)" r="5"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="9.5" x="12" y="2">SOLAR-SPK-06</text>
+<text fill="#ffb95f" font-family="Inter" font-size="8" x="12" y="12">เฝ้าระวัง 6.7%</text>
+</g>
+<!-- 9. [ภาคตะวันออก - ชลบุรี] SOLAR-CBI-03 (Chonburi Coastal Office Park) -->
+<g class="cursor-pointer group" transform="translate(350, 475)">
+<circle cx="0" cy="0" fill="#4edea3" filter="url(#neonGlowEmerald)" r="6"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="10.5" font-weight="600" x="14" y="2">SOLAR-CBI-03</text>
+<text fill="#4edea3" font-family="Inter" font-size="8.5" x="14" y="13">สะอาด 1.1% • 544.4 kWp</text>
+</g>
+<!-- 10. [ภาคตะวันออก - ระยอง] SOLAR-RYG-02 (Rayong Industrial Warehouse) -->
+<g class="cursor-pointer group" transform="translate(385, 510)">
+<circle class="animate-pulse" cx="0" cy="0" fill="#ff5449" fill-opacity="0.25" r="16"></circle>
+<circle cx="0" cy="0" fill="#ff5449" filter="url(#neonGlowRed)" r="6"></circle>
+<text fill="#dfe2f1" font-family="Space Grotesk" font-size="10.5" font-weight="600" x="14" y="2">SOLAR-RYG-02 🔴</text>
+<text fill="#ffb4ab" font-family="Inter" font-size="8.5" x="14" y="13">ล้างด่วน 12.8% (฿450/วัน)</text>
+</g>
+</svg>
+<!-- FLOATING TACTICAL INSPECTION CALLOUT CARD: FOCUS ON SOLAR-SRI-10 SARABURI -->
+<div class="absolute top-[32%] right-6 lg:right-12 w-80 bg-surface-container-high/95 border border-error/50 rounded-xl p-space-md shadow-2xl backdrop-blur-xl z-30 transition-transform duration-300 hover:scale-[1.02]">
+<!-- Card Micro-Header -->
+<div class="flex items-center justify-between pb-space-xs border-b border-outline-variant/40">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+<span class="font-label-sm text-label-sm text-error font-bold tracking-wider uppercase">CRITICAL SOILING ALERT</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">14.5289° N, 100.9101° E</span>
+</div>
+<!-- Title & Plant Identity -->
+<div class="mt-space-xs flex justify-between items-start">
+<div>
+<h3 class="font-title-lg text-title-lg text-on-surface font-bold">SOLAR-SRI-10</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Saraburi Cement Solar Farm (แก่งคอย, สระบุรี)</p>
+</div>
+<span class="px-space-xs py-0.5 rounded bg-error-container text-on-error font-label-sm text-label-sm font-bold">SOILING 16.4%</span>
+</div>
+<!-- Live Telemetry KPI Metrics -->
+<div class="grid grid-cols-2 gap-space-xs mt-space-sm bg-surface-container-lowest/80 p-space-xs rounded">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">CURRENT OUTPUT</span>
+<span class="font-title-md text-title-md text-primary font-bold">712 <span class="text-body-sm font-normal text-on-surface-variant">/ 850 kWp</span></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">REVENUE DEFICIT</span>
+<span class="font-title-md text-title-md text-error font-bold">฿1,120 <span class="text-body-sm font-normal text-on-surface-variant">/วัน</span></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">SOLAR FLUX (POA)</span>
+<span class="font-title-md text-title-md text-tertiary font-semibold">890 W/m²</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline">DUST LEVEL (PM10)</span>
+<span class="font-title-md text-title-md text-error font-semibold">142 µg/m³</span>
+</div>
+</div>
+<!-- Weather Condition Info -->
+<div class="flex items-center gap-space-sm mt-space-xs text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-tertiary text-[18px]">wb_sunny</span>
+<span>สภาพอากาศ: แดดจัดมาก (ไม่มีฝนใน 72 ชม. ข้างหน้า)</span>
+</div>
+<!-- Action Button: Dispatch Wash Crew -->
+<div class="mt-space-md flex gap-space-xs">
+<button class="flex-1 py-2 px-space-sm rounded bg-error/20 hover:bg-error/30 text-on-surface font-title-md text-title-md font-semibold border border-error shadow-[0_0_15px_rgba(255,84,73,0.35)] flex items-center justify-center gap-1.5 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-error">local_shipping</span>
+<span>ส่งทีมล้างด่วนพิเศษ</span>
+</button>
+<button class="px-space-sm py-2 rounded bg-surface-container hover:bg-surface-container-highest text-primary transition-colors flex items-center justify-center" title="เปิดวิเคราะห์ไซต์เชิงลึก" type="button">
+<span class="material-symbols-outlined text-[18px]">open_in_new</span>
+</button>
+</div>
+</div>
+<!-- HUD Radar Legend (Bottom Left Corner) -->
+<div class="absolute bottom-space-md left-space-md bg-surface-container-high/90 backdrop-blur-xl p-space-sm rounded-lg shadow-xl flex flex-col gap-1 z-20">
+<div class="font-label-sm text-label-sm text-outline uppercase tracking-wider mb-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">legend_toggle</span>
+<span>เกณฑ์การแจ้งเตือนระดับฝุ่น (SOILING THRESHOLD)</span>
+</div>
+<div class="flex items-center gap-space-sm text-body-sm">
+<span class="w-3 h-3 rounded-full bg-error shadow-[0_0_8px_rgba(255,84,73,0.9)] animate-pulse"></span>
+<span class="text-on-surface font-medium">ฝุ่นวิกฤต / ต้องล้างด่วน (>10% Attenuation)</span>
+<span class="text-error font-bold ml-auto pl-space-md">3 ไซต์</span>
+</div>
+<div class="flex items-center gap-space-sm text-body-sm">
+<span class="w-3 h-3 rounded-full bg-tertiary shadow-[0_0_8px_rgba(255,185,95,0.7)]"></span>
+<span class="text-on-surface font-medium">ฝุ่นปานกลาง / เฝ้าระวัง (5 - 10%)</span>
+<span class="text-tertiary font-bold ml-auto pl-space-md">3 ไซต์</span>
+</div>
+<div class="flex items-center gap-space-sm text-body-sm">
+<span class="w-3 h-3 rounded-full bg-secondary shadow-[0_0_8px_rgba(78,222,163,0.7)]"></span>
+<span class="text-on-surface font-medium">แผงสะอาด / สภาพปกติ (<5%)</span>
+<span class="text-secondary font-bold ml-auto pl-space-md">4 ไซต์</span>
+</div>
+</div>
+</div>
+<!-- Live Drone / Satellite Fleet Preview Strip -->
+<div class="w-full grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<div class="relative bg-surface-container rounded-lg p-space-sm flex items-center gap-space-sm shadow-md overflow-hidden">
+<img class="w-16 h-16 rounded object-cover flex-shrink-0" data-alt="High angle aerial drone view of Saraburi cement solar farm panels heavily covered with cement dust particles under bright harsh tropical midday sunlight, cinematic industrial SCADA inspection photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCaCKYj-VL85w_J24lr0wIn3N4QDSZuu_a3FagDpBaPtBCA-YTAJhBwblWp1Iu8p-n2NMCtRWWsBObdU0oXoxWGBt49r-VQ8ur-2ePVYAf7H6DlxK5pB3gUsDpvUZ5MLfQwrTuRseQmjVNuRmkG4jdkaz-rdmPTWf1C3yQew-L5Gfa_ReGX4mc0VLux6LRys-fHxtVG5AZaq85w6pE5crLs_fVXyqH2Hc_lISYR5pC0GNCucrMv67fwag"/>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1 text-error font-label-sm">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+<span>กล้องโดรนสระบุรี (AI Soiling)</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface truncate font-semibold">Cement Dust Layer: 16.4%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">บินสำรวจเมื่อ 15 นาทีที่แล้ว</span>
+</div>
+</div>
+<div class="relative bg-surface-container rounded-lg p-space-sm flex items-center gap-space-sm shadow-md overflow-hidden">
+<img class="w-16 h-16 rounded object-cover flex-shrink-0" data-alt="Close up view of clean monocrystalline photovoltaic panels with blue solar cells reflecting clear skies at Chonburi coastal solar site, high tech industrial aesthetics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSs2JIEhaE-VMeqq4R9I55aZrb4HfJwE_fuo_J-b7d3weYLuJXN58bI-9crKZ4fCMnQfLJxdsrd8wgjbbWYpjQ6li68KM1BbB682zFo4PsGC1fUTdr_nGwcn-llTmzZN7w59GPstfTkx0Rp21BYmvjcD_CXd7J6zuQeQB_iw2dWQAD2i5RA0wjMEU6-ERFofi_7ebCL61gfSvOrOR7_84qPlQ4pxI1gXRjjm5X2rZfcO_i5FpTj5m5iw"/>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1 text-secondary font-label-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>กล้องชลบุรี (Coastal Array)</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface truncate font-semibold">Surface Pristine: 98.9% Clean</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">ประสิทธิภาพ PR สูงสุด 84.1%</span>
+</div>
+</div>
+<div class="relative bg-surface-container rounded-lg p-space-sm flex items-center gap-space-sm shadow-md overflow-hidden">
+<img class="w-16 h-16 rounded object-cover flex-shrink-0" data-alt="Automated industrial solar panel cleaning robot moving smoothly over a large utility scale solar array at Rayong industrial site during scheduled maintenance, vibrant sunset reflection" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnpOEKOMcCngvkIMKFPEkfPkUiyw-Juksbvy4wGBQlftmUbz3p0HJIFXUCGLdp-Yy1fqPRg6mv6Dv3nxsr80MSibX8oNRQvfCX2F2VRs3OsrGRevvxNls2Wa-ziG-WxkdVsGqwo4UOJMnxzBZ7BMk8Zg8uP3g1oqrJXwuYjXVhb1OytusKoeuvrg-gX06vXjHt8ljV5_V8ewskme3pT6csSlPOBq-GeA1hooYLjLGEtUPQ7UNqQxmJxg"/>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1 text-primary font-label-sm">
+<span class="material-symbols-outlined text-[14px]">smart_toy</span>
+<span>หุ่นยนต์ทำความสะอาด (ระยอง)</span>
+</div>
+<span class="font-title-md text-title-md text-on-surface truncate font-semibold">Auto-Wash Bot 02 Standby</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">พร้อมเข้าล้างรอบ 18:30 น.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT SIDEBAR (Cols 9-12): Regional Telemetry & Urgent Dispatch Queue -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- SECTION A: สรุปสถานะตามภูมิภาค (Regional Overview Cards) -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-md shadow-xl flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">analytics</span>
+<h2 class="font-title-lg text-title-lg text-on-surface font-semibold">สรุปสถานะตามภูมิภาค</h2>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-high text-outline">4 REGIONS ACTIVE</span>
+</div>
+<!-- Regional Metric Cards Grid -->
+<div class="flex flex-col gap-space-xs pt-space-xs">
+<!-- ภาคกลาง & กทม. -->
+<div class="p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-error shadow-[0_0_8px_rgba(255,84,73,0.8)]"></span>
+<span class="font-title-md text-title-md text-on-surface font-bold">ภาคกลาง & กทม.</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-1.5 py-0.5 rounded bg-surface-container-lowest font-mono">5 ไซต์</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-1 pt-1 border-t border-outline-variant/30 text-body-sm">
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">กำลังผลิตติดตั้ง</span>
+<span class="text-on-surface font-semibold font-title-md text-title-md">2.80 MWp</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">สูญเสียสะสมรวม</span>
+<span class="text-error font-bold font-title-md text-title-md">฿1,843 /วัน</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-1 overflow-hidden">
+<div class="bg-error h-full rounded-full" style="width: 72%;"></div>
+</div>
+</div>
+<!-- ภาคตะวันออก -->
+<div class="p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-title-md text-title-md text-on-surface font-bold">ภาคตะวันออก (EEC)</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-1.5 py-0.5 rounded bg-surface-container-lowest font-mono">2 ไซต์</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-1 pt-1 border-t border-outline-variant/30 text-body-sm">
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">กำลังผลิตติดตั้ง</span>
+<span class="text-on-surface font-semibold font-title-md text-title-md">1.10 MWp</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">สูญเสียสะสมรวม</span>
+<span class="text-tertiary font-bold font-title-md text-title-md">฿475 /วัน</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-1 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 38%;"></div>
+</div>
+</div>
+<!-- ภาคอีสาน -->
+<div class="p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-title-md text-title-md text-on-surface font-bold">ภาคตะวันออกเฉียงเหนือ</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-1.5 py-0.5 rounded bg-surface-container-lowest font-mono">1 ไซต์</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-1 pt-1 border-t border-outline-variant/30 text-body-sm">
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">กำลังผลิตติดตั้ง</span>
+<span class="text-on-surface font-semibold font-title-md text-title-md">0.50 MWp</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">สูญเสียสะสมรวม</span>
+<span class="text-tertiary font-bold font-title-md text-title-md">฿380 /วัน</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-1 overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 25%;"></div>
+</div>
+</div>
+<!-- ภาคเหนือ -->
+<div class="p-space-sm rounded-lg bg-surface-container hover:bg-surface-container-high transition-colors flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-title-md text-title-md text-on-surface font-bold">ภาคเหนือ</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant px-1.5 py-0.5 rounded bg-surface-container-lowest font-mono">1 ไซต์</span>
+</div>
+<div class="grid grid-cols-2 gap-2 mt-1 pt-1 border-t border-outline-variant/30 text-body-sm">
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">กำลังผลิตติดตั้ง</span>
+<span class="text-on-surface font-semibold font-title-md text-title-md">0.35 MWp</span>
+</div>
+<div class="flex flex-col">
+<span class="text-outline text-label-sm font-label-sm">สูญเสียสะสมรวม</span>
+<span class="text-secondary font-bold font-title-md text-title-md">฿82 /วัน</span>
+</div>
+</div>
+<div class="w-full bg-surface-container-lowest h-1.5 rounded-full mt-1 overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 8%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION B: คิวจัดลำดับความเร่งด่วนตามพื้นที่ (Priority Dispatch Queue) -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-md shadow-xl flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-error text-[20px]">crisis_alert</span>
+<h2 class="font-title-lg text-title-lg text-on-surface font-semibold">คิวจัดลำดับความเร่งด่วนล้างแผง</h2>
+</div>
+<span class="font-label-sm text-label-sm text-error bg-error/15 px-2 py-0.5 rounded uppercase font-bold">TOP 3 URGENT</span>
+</div>
+<div class="flex flex-col gap-space-xs">
+<!-- Item 1: Saraburi -->
+<div class="bg-surface-container p-space-sm rounded-lg flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded bg-error/20 text-error flex items-center justify-center font-bold font-mono text-body-md">
+                1
+              </div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold">SOLAR-SRI-10 (สระบุรี)</span>
+<span class="font-body-sm text-body-sm text-error">สูญเสีย ฿1,120/วัน • ฝุ่น 16.4%</span>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-error-container text-on-error font-label-sm text-label-sm font-bold whitespace-nowrap">
+              ล้างทันที
+            </span>
+</div>
+<!-- Item 2: Pathum Thani -->
+<div class="bg-surface-container p-space-sm rounded-lg flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded bg-error/20 text-error flex items-center justify-center font-bold font-mono text-body-md">
+                2
+              </div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold">SOLAR-PTT-04 (ปทุมธานี)</span>
+<span class="font-body-sm text-body-sm text-error">สูญเสีย ฿620/วัน • ฝุ่น 14.5%</span>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-error-container text-on-error font-label-sm text-label-sm font-bold whitespace-nowrap">
+              จัดคิว พรุ่งนี้
+            </span>
+</div>
+<!-- Item 3: Rayong -->
+<div class="bg-surface-container p-space-sm rounded-lg flex items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded bg-tertiary/20 text-tertiary flex items-center justify-center font-bold font-mono text-body-md">
+                3
+              </div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md text-on-surface font-bold">SOLAR-RYG-02 (ระยอง)</span>
+<span class="font-body-sm text-body-sm text-tertiary">สูญเสีย ฿450/วัน • ฝุ่น 12.8%</span>
+</div>
+</div>
+<span class="px-space-xs py-1 rounded bg-tertiary-container text-on-tertiary font-label-sm text-label-sm font-bold whitespace-nowrap">
+              รอเปิดรอบ
+            </span>
+</div>
+</div>
+<!-- Route Optimizer Action -->
+<button class="w-full mt-space-xs py-2.5 px-space-md rounded bg-primary text-on-primary font-title-md text-title-md font-semibold shadow-lg hover:bg-primary/90 flex items-center justify-center gap-2 transition-transform active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[18px]">alt_route</span>
+<span>วางแผนเส้นทางทีมล้างแผง (Route Optimizer)</span>
+</button>
+</div>
+<!-- SECTION C: สภาพอากาศ & ความเข้มแสงแบบ Real-time (Solar Irradiance Heat by Zone) -->
+<div class="w-full bg-surface-container-low rounded-xl p-space-md shadow-xl flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-tertiary text-[20px]">light_mode</span>
+<h2 class="font-title-lg text-title-lg text-on-surface font-semibold">ความเข้มแสงแดด & สภาพอากาศ</h2>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-mono">LIVE PYRANOMETER</span>
+</div>
+<!-- Zone Solar Bars Visualizer -->
+<div class="flex flex-col gap-space-sm pt-space-xs">
+<!-- Zone 1: Central -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface">ภาคกลาง & อยุธยา-สระบุรี</span>
+<span class="text-tertiary font-mono font-bold">890 W/m² (แดดจัดมาก)</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full rounded-full" style="width: 89%;"></div>
+</div>
+</div>
+<!-- Zone 2: Eastern EEC -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface">ภาคตะวันออก (ชลบุรี-ระยอง)</span>
+<span class="text-primary font-mono font-bold">845 W/m² (แดดแรง)</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 84%;"></div>
+</div>
+</div>
+<!-- Zone 3: Isan -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface">ภาคอีสาน (ขอนแก่น)</span>
+<span class="text-primary font-mono font-bold">810 W/m² (ปกติ)</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 81%;"></div>
+</div>
+</div>
+<!-- Zone 4: North -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between text-body-sm">
+<span class="text-on-surface">ภาคเหนือ (เชียงใหม่)</span>
+<span class="text-secondary font-mono font-bold">750 W/m² (มีเมฆบางส่วน)</span>
+</div>
+<div class="w-full bg-surface-container h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full" style="width: 75%;"></div>
+</div>
+</div>
+</div>
+<!-- Atmospheric Summary Footer -->
+<div class="mt-space-xs p-space-xs rounded bg-surface-container text-on-surface-variant font-body-sm flex items-center justify-between">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">air</span>
+<span>ทิศทางลมเฉลี่ย: ตะวันตกเฉียงใต้ 14 กม./ชม.</span>
+</span>
+<span class="text-outline font-label-sm font-mono">AQI: 78 (ปานกลาง)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Interactive Map Layer & Search Handler Script -->
+<script>
+    (function() {
+      // Map Layer Toggle Interactivity
+      const btnSat = document.getElementById('btnLayerSat');
+      const btnFlux = document.getElementById('btnLayerFlux');
+      const btnSoiling = document.getElementById('btnLayerSoiling');
+      const layerButtons = [btnSat, btnFlux, btnSoiling];
+
+      layerButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          layerButtons.forEach(b => {
+            b.classList.remove('bg-primary-container', 'text-on-primary', 'shadow-sm');
+            b.classList.add('text-on-surface-variant');
+          });
+          btn.classList.add('bg-primary-container', 'text-on-primary', 'shadow-sm');
+          btn.classList.remove('text-on-surface-variant');
+        });
+      });
+
+      // Quick Search Live Filter Feedback
+      const searchInput = document.getElementById('siteSearchInput');
+      if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+          const query = e.target.value.toLowerCase().trim();
+          const siteElements = document.querySelectorAll('svg g.cursor-pointer');
+          siteElements.forEach(el => {
+            const txt = el.textContent.toLowerCase();
+            if (!query || txt.includes(query)) {
+              el.style.opacity = '1';
+              el.style.transform = 'scale(1)';
+            } else {
+              el.style.opacity = '0.25';
+            }
+          });
+        });
+      }
+    })();
+  </script>
+</div></main></div></body></html>

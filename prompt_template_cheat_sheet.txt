@@ -1,0 +1,167 @@
+================================================================================
+  PROMPT CHEAT SHEET & TEMPLATE: SOLAR FLEET AI OPERATIONS ASSISTANT
+  สำหรับนักเรียน Vibe Coding (ใช้ร่วมกับ Cursor / Claude Code / Windsurf / ChatGPT)
+================================================================================
+
+คำแนะนำสำหรับนักเรียน:
+1. อย่าโยนทุกอย่างลงไปใน Prompt เดียว! ให้ทำทีละ Sprint (1 -> 2 -> 3)
+2. ก๊อปปี้ข้อความในเครื่องหมาย [PROMPT] ไปวางใน AI Chat ได้ทันที
+3. อย่าลืมแทนที่ <YOUR_GROUP_ID> และ <YOUR_API_KEY> ด้วยค่าที่ผู้สอนแจกให้
+
+--------------------------------------------------------------------------------
+STAGE 0: MASTER CONTEXT & ENVIRONMENT SETUP (วางกติกาให้ AI ก่อนเริ่ม)
+--------------------------------------------------------------------------------
+เป้าหมาย: กำหนด Architecture, กฎของระบบ และป้องกันไม่ให้ AI เขียนโค้ดผิดทาง
+
+[PROMPT]
+คุณคือ Senior Full-stack Developer ที่เชี่ยวชาญ FastAPI และ Tailwind CSS
+เรากำลังจะสร้างเว็บแอปพลิเคชัน "Solar Fleet Operations & Smart AI Dispatcher" 
+เพื่อมอนิเตอร์โรงไฟฟ้าโซลาร์ 10 ไซต์แบบ Real-time และมีระบบ AI ช่วยตัดสินใจสั่งล้างแผง
+
+ข้อมูลเซิร์ฟเวอร์ภายนอก (Solar IoT API):
+- Base URL: https://solar-test-api.onrender.com
+- Group ID: "<YOUR_GROUP_ID>"  (เช่น g1, g2, g3, g4)
+- API Key Header: "x-api-key": "<YOUR_API_KEY>"
+
+กฎเหล็กทางสถาปัตยกรรม (ห้ามละเมิดเด็ดขาด):
+1. Single-Port Architecture: ระบบต้องรันบน Port 8000 พอร์ตเดียว และ Bind host 0.0.0.0
+2. FastAPI จะเป็นตัวเสิร์ฟทั้ง Backend API และหน้าเว็บ HTML/JS ในตัว
+3. Subpath Rule: ในฝั่ง Frontend (HTML/JS) เวลา fetch API ต้องใช้ Relative Path เสมอ เช่น fetch('./api/...') ห้ามใส่ root slash นำหน้า (/api/...) เด็ดขาด
+4. ใช้ httpx สำหรับยิง REST API ภายนอก และใช้ pydantic-settings หรือ python-dotenv ในการโหลด Config
+5. สร้างไฟล์ run.sh สำหรับรันโปรเจกต์ด้วย uv run python run.py
+
+ตอบรับว่าเข้าใจข้อกำหนดทั้งหมด แล้วรอรับคำสั่งใน Sprint 1 ได้เลย
+[/PROMPT]
+
+
+--------------------------------------------------------------------------------
+STAGE 1: SPRINT 1 — SKELETON & LIVE FLEET TELEMETRY (ดึงข้อมูลสด 10 ไซต์)
+--------------------------------------------------------------------------------
+เป้าหมาย: ดึง 10 ไซต์และ Telemetry สดมาแสดงบนการ์ด Dashboard ใน Port 8000
+
+[PROMPT]
+มาเริ่ม Sprint 1 กัน: สร้างโครงสร้างโปรเจกต์และเชื่อมต่อ Solar IoT API
+สิ่งที่ต้องทำ:
+1. สร้างไฟล์ api_client.py เพื่อเชื่อมต่อ https://solar-test-api.onrender.com โดยมี method:
+   - get_sites(): GET /api/v1/{GROUP_ID}/sites (ดึงข้อมูล 10 ไซต์: site_id, site_name, capacity_kwp)
+   - get_telemetry(): GET /api/v1/{GROUP_ID}/telemetry (ดึงเซนเซอร์สด: irradiance_w_m2, pv_power_kw, actual_yield_kwh, panel_temp_c)
+   (อย่าลืมแนบ header x-api-key ทุกครั้ง)
+
+2. สร้าง FastAPI app ใน app.py พร้อม endpoint:
+   - GET /api/snapshot: รวมข้อมูล sites และ telemetry ของแต่ละไซต์เข้าด้วยกัน
+   - GET /: เสิร์ฟหน้า index.html
+
+3. สร้างหน้าเว็บ UI (index.html) สไตล์ Modern Clean Dashboard โดยใช้ Tailwind CSS (CDN):
+   - มี Header ด้านบน: ชื่องาน "Solar Fleet Operations Dashboard", กลุ่ม, และปุ่มกด Refresh ข้อมูล
+   - แสดง Summary Cards ด้านบน: กำลังผลิตรวมทั้งพอร์ต (kW), แดดเฉลี่ย (W/m²), อุณหภูมิเฉลี่ย (°C)
+   - แสดง Grid การ์ดของทั้ง 10 ไซต์ (เรียง 3-4 คอลัมน์) แต่ละการ์ดแสดง:
+     * ชื่อไซต์ และรหัส site_id
+     * กำลังผลิตสด (pv_power_kw) / ความจุติดตั้ง (capacity_kwp)
+     * ความเข้มแสงแดด (irradiance_w_m2)
+     * อุณหภูมิแผง (panel_temp_c)
+
+เขียนโค้ดทั้งหมดให้พร้อมรันบน Port 8000 ทันที
+[/PROMPT]
+
+
+--------------------------------------------------------------------------------
+STAGE 2: SPRINT 2 — FINANCIAL LOGIC & AI DISPATCH ENGINE (สมองกลประเมินคุ้มทุน)
+--------------------------------------------------------------------------------
+เป้าหมาย: นำสูตรธุรกิจใส่ในระบบ แปลงหน่วยไฟเป็นเงินบาท และวิเคราะห์ Cost of Inaction 30 วัน
+
+[PROMPT]
+ยอดเยี่ยมมาก! ตอนนี้เราจะเพิ่ม "หัวใจทางธุรกิจ" (Business & Financial Logic) ใน Sprint 2
+ให้สร้างโมดูล financial.py เพื่อคำนวณตัวเลขและประเมินจุดคุ้มทุนการล้างแผงตามสูตรดังนี้:
+
+1. สูตร Expected Yield (กำลังผลิตที่ควรได้ตามทฤษฎีเมื่อแดดส่อง):
+   expected_kw = capacity_kwp * (irradiance_w_m2 / 1000.0) * 0.95
+
+2. สูตร Soiling Loss % (อัตราการสูญเสียจากฝุ่น):
+   soiling_loss_pct = max(0.0, ((expected_kw - pv_power_kw) / expected_kw) * 100.0)
+
+3. สถานะความสะอาดแผงโซลาร์ (Soiling Status):
+   - Soiling Loss < 5.0%: 🟢 ปกติ (แผงสะอาด)
+   - Soiling Loss 5.0% - 15.0%: 🟡 เฝ้าระวัง (ฝุ่นปานกลาง)
+   - Soiling Loss >= 15.0%: 🔴 วิกฤต (ฝุ่นหนาแน่นสูง)
+
+4. สูตรคำนวณเงินบาทที่สูญเสียต่อวัน (Daily Revenue Lost THB):
+   - daily_lost_kwh = capacity_kwp * 4.5 * 0.95 * (soiling_loss_pct / 100.0)
+   - daily_lost_thb = daily_lost_kwh * 2.20 (อิง Feed-in tariff 2.20 บ./kWh)
+
+5. สูตร AI Dispatch Recommendation (วิเคราะห์จุดคุ้มทุน Cost of Inaction 30 วัน):
+   - projected_30d_loss = daily_lost_thb * 30 วัน
+   - cleaning_cost = 15,000 บาท (ค่าบริการล้างแผงต่อไซต์)
+   - เงื่อนไขตัดสินใจ:
+     * หาก projected_30d_loss > cleaning_cost:
+       ผลประโยชน์สุทธิ (Net Saving) = projected_30d_loss - cleaning_cost
+       แนะนำ: "⚠️ ต้องดำเนินการ: สั่งล้างทันทีคุ้มค่ากว่า (ประหยัดสุทธิ +X บาท)" -> ป้ายสีแดง
+     * หาก projected_30d_loss <= cleaning_cost:
+       แนะนำ: "ℹ️ เฝ้าระวัง: ยังไม่จำเป็นต้องล้างวันนี้" -> ป้ายสีเขียว
+
+*** ข้อกำหนดสำคัญที่สุด (Night-time Fallback Rule) ***:
+หาก irradiance_w_m2 < 150.0 W/m² (ช่วงกลางคืนหรือเช้ามืดที่ไม่มีแดด) ห้ามคำนวณ Expected Yield จากแดดสดเด็ดขาด เพราะจะทำให้หารด้วย 0 หรือได้ค่าติดลบ!
+ให้ทำ fallback โดยไปดึงค่า loss % และ daily_lost_thb จากข้อมูลของเมื่อวาน (GET /api/v1/{GROUP_ID}/history/last/1/{site_id}) แทน
+
+อัปเดต app.py และหน้าเว็บ Dashboard ให้แสดง:
+- Badge สีสถานะ 🟢/🟡/🔴 บนการ์ดแต่ละไซต์
+- ตัวเลขเงินที่สูญเสีย (บาท/วัน)
+- กล่องคำแนะนำ AI Decision Box ชัดเจนว่าไซต์ไหนต้องสั่งล้างด่วน
+[/PROMPT]
+
+
+--------------------------------------------------------------------------------
+STAGE 3: SPRINT 3 — INTERACTIVE OPERATIONS & SIMULATION (ปุ่มสั่งการ & พายุฝุ่น)
+--------------------------------------------------------------------------------
+เป้าหมาย: มีปุ่มส่งทีมล้างแผง, ปุ่มจำลองพายุฝุ่นฉุกเฉิน, และ Modal ดูกราฟย้อนหลัง
+
+[PROMPT]
+ตอนนี้มาทำ Sprint 3 ซึ่งเป็นฟังก์ชัน Interactive และการทดสอบระบบ:
+
+1. เพิ่มปุ่ม "ส่งทีมล้างแผง (Dispatch Clean Team)" บนการ์ดของแต่ละไซต์:
+   - เมื่อผู้ใช้กดปุ่ม ให้แสดงกล่องคอนเฟิร์ม จากนั้นยิง POST ไปที่:
+     https://solar-test-api.onrender.com/api/v1/{GROUP_ID}/telemetry/{site_id}/clean
+     payload: {"technician_team": "Team A", "notes": "Scheduled Clean"}
+   - เมื่อสำเร็จ ให้แจ้งเตือนว่า "ส่งทีมล้างเรียบร้อย" และรีเฟรชข้อมูลหน้าจอทันที (ค่าฝุ่นจะถูกรีเซ็ตกลับเป็น 🟢 ปกติ)
+
+2. เพิ่มปุ่ม "จำลองพายุฝุ่นฉุกเฉิน (Simulate Dust Storm)" ที่แถบ Header ด้านบน:
+   - เมื่อกดปุ่ม ให้ยิง POST ไปที่:
+     https://solar-test-api.onrender.com/api/v1/simulate/dust-storm/{GROUP_ID}
+   - เมื่อ API ตอบรับ ให้รีเฟรชหน้าจอทันที เพื่อดูว่าระบบตรวจจับวิกฤตฝุ่นพุ่ง ~70% และการ์ดทุกใบเปลี่ยนเป็นสีแดง 🔴 พร้อมคำแนะนำสั่งล้างด่วนหรือไม่
+
+3. เพิ่ม Modal วิเคราะห์เจาะลึก (Site Deep-Dive Modal):
+   - เมื่อคลิกที่การ์ดไซต์ใดไซต์หนึ่ง ให้เปิด Modal ป๊อปอัปขึ้นมา
+   - ยิง API ดึงประวัติ 7 วัน: GET /api/v1/{GROUP_ID}/history/last/7/{site_id} (หรือประวัติ 12 เดือน: GET .../history/monthly/12/{site_id} สังเกต: รายเดือนจะใช้คีย์ "month" แทน "date")
+   - วาดกราฟเปรียบเทียบ Expected Yield vs Actual Yield ย้อนหลัง 7 วัน โดยใช้ Chart.js (CDN)
+   - แสดงสถิติแดดเฉลี่ย (Sun hours) และสรุปความสูญเสียสะสม
+
+เขียนโค้ดและปรับปรุงหน้า UI ให้สวยงาม ลื่นไหล และไม่มี Syntax Error
+[/PROMPT]
+
+
+--------------------------------------------------------------------------------
+STAGE 4: TROUBLESHOOTING & EMERGENCY FIXES (เมื่อเจอปัญหาหน้างาน)
+--------------------------------------------------------------------------------
+
+กรณีที่ 1: หน้าเว็บโหลดช้า หรือเจอข้อผิดพลาด 504 Gateway Timeout จาก Render
+[PROMPT]
+เนื่องจาก API ภายนอกบน Render อาจใช้เวลาตอบสนองนานเมื่อถูกเรียกพร้อมกันบ่อยๆ 
+ช่วยเพิ่มระบบ Caching ใน Backend ของเรา:
+1. เก็บผลลัพธ์ของ sites, telemetry และ history ไว้ในหน่วยความจำ (In-memory Cache) หรือ SQLite ชั่วคราว
+2. ทำ Background Sync ทำงานเบื้องหลังทุกๆ 60 วินาที เพื่อคอยอัปเดตข้อมูลจาก Solar API
+3. เมื่อหน้าเว็บเรียก GET /api/snapshot ให้ส่งข้อมูลจาก Local Cache ออกไปทันที โดยผู้ใช้ไม่ต้องรอ Request ภายนอก ทำให้หน้าเว็บโหลดเร็วขึ้นและไม่ติด 504 Timeout
+[/PROMPT]
+
+กรณีที่ 2: รันแล้วเจอปัญหา Port 8000 ชนกัน (Address already in use)
+[PROMPT]
+พอร์ต 8000 กำลังถูกใช้งานค้างอยู่ ช่วยเขียนคำสั่ง shell สำหรับค้นหาและ kill process ที่ค้างบน Port 8000 ให้เด็ดขาดก่อนเริ่มรัน uvicorn ใหม่อีกครั้ง
+(คำสั่งที่แนะนำ: kill -9 $(lsof -t -i:8000) 2>/dev/null || true)
+[/PROMPT]
+
+กรณีที่ 3: สไตล์ Tailwind CSS หรือปุ่มกดคลิกแล้วไม่ทำงาน
+[PROMPT]
+ตรวจสอบหน้า index.html:
+1. ตรวจสอบว่าโหลด Tailwind CDN และ Chart.js CDN ครบถ้วนหรือไม่
+2. ตรวจสอบคำสั่ง fetch() ใน JavaScript ทั้งหมดว่าใช้ Relative Path เช่น fetch('./api/snapshot') หรือไม่ ห้ามมี '/' นำหน้า
+3. ตรวจสอบ Console Log ใน Browser Developer Tools ให้มั่นใจว่าไม่มี TypeError หรือ Unhandled Promise Rejection
+[/PROMPT]
+================================================================================
