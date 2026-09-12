@@ -1,0 +1,13 @@
+{
+  "name": "solar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Solar Fleet Operations Dashboard on Cloudflare Workers",
+  "main": "worker.js",
+  "scripts": {
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.109.2"
+  }
+}
