@@ -94,7 +94,6 @@
             <span class="sync-icon" id="syncIcon">&#8635;</span> <span id="syncBtnText">ซิงค์ข้อมูล</span>
           </button>
           <span class="sync-status-badge" id="syncBadge">พร้อมใช้งาน</span>
-          <button class="icon-btn" id="btnRefreshTop" title="รีเฟรชข้อมูล">&#8635;</button>
           <span class="user-chip"><span class="avatar">&#128100;</span> <span id="usernameText">Phornnatee(ป่าน)</span></span>
           <span class="online-badge" id="connectionBadge">ออนไลน์</span>
         </div>
@@ -219,7 +218,7 @@
                   <option value="30" selected>30 วินาที</option>
                   <option value="60">60 วินาที</option>
                 </select>
-                <button class="btn btn-primary" id="btnRefresh">&#8635; รีเฟรชทันที</button>
+                <button class="btn btn-primary" id="btnRefresh" onclick="manualSync()"><span class="btn-refresh-icon">&#8635;</span> <span id="btnRefreshText">รีเฟรชทันที</span></button>
                 <span class="last-updated" id="lastUpdated">อัปเดตล่าสุด: &mdash;</span>
               </div>
               <div class="history-controls hidden" id="historyControls">

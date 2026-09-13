@@ -136,30 +136,38 @@ def _build_site_row(
     if capacity_kwp <= 0.0:
         capacity_kwp = db.get_site_capacity_kwp(t.get("site_id", ""))
 
-    # 1. ตรวจสอบว่ามีแสงแดดเพียงพอหรือไม่
+    # ดึงค่า Soiling Loss พื้นฐานจากสถิติรายวัน (Ground truth baseline)
+    hist_soiling_loss = 0.0
+    hist_daily_lost_thb = 0.0
+    if history_record:
+        exp_hist = float(history_record.get("expected_yield_kwh", 0.0))
+        act_hist = float(history_record.get("actual_yield_kwh", 0.0))
+        hist_soiling_loss = SolarAPIClient.calculate_soiling_loss(exp_hist, act_hist) if exp_hist > 0 else 0.0
+        hist_daily_lost_thb = financial.revenue_lost_thb(exp_hist, act_hist, feed_in_tariff)
+
+    # 7. Night Fallback Rule (ตามโจทย์: If Irradiance < 150 W/m²: ใช้ Loss% และ Lost THB ของเมื่อวาน)
     if irradiance_w_m2 >= 150.0 and capacity_kwp > 0.0:
-        # คำนวณแบบ Real-time แท้จริงจากเซนเซอร์ขณะนั้น
         expected_pv_kw = capacity_kwp * (irradiance_w_m2 / 1000.0) * 0.95
         if expected_pv_kw > 0.0:
-            soiling_loss_pct = max(0.0, ((expected_pv_kw - pv_power_kw) / expected_pv_kw) * 100.0)
+            instant_loss = max(0.0, ((expected_pv_kw - pv_power_kw) / expected_pv_kw) * 100.0)
         else:
-            soiling_loss_pct = 0.0
+            instant_loss = 0.0
 
-        # ประมาณการเงินสูญเสียต่อวันตามสภาพแดดเฉลี่ย (4.5 Peak Sun Hours)
+        # ป้องกันค่าแกว่งจากเซนเซอร์ Noise ในช่วงแดดร่ม/ปลายวัน (< 350 W/m²):
+        # ผสมผสานอย่างนุ่มนวลร่วมกับค่าประวัติรายวัน (Ground Truth) เพื่อไม่ให้ตัวเลขกระโดด
+        if hist_soiling_loss > 0.0 and irradiance_w_m2 < 350.0:
+            soiling_loss_pct = 0.80 * hist_soiling_loss + 0.20 * instant_loss
+        elif hist_soiling_loss > 0.0:
+            soiling_loss_pct = 0.50 * hist_soiling_loss + 0.50 * instant_loss
+        else:
+            soiling_loss_pct = instant_loss
+
         daily_lost_kwh = capacity_kwp * 4.5 * 0.95 * (soiling_loss_pct / 100.0)
         daily_lost_thb = daily_lost_kwh * feed_in_tariff
     else:
-        # เวลากลางคืนหรือไม่มีแดด: ให้ Fallback ใช้ค่า Soiling Loss ล่าสุดจาก Daily History มาค้างไว้
-        if history_record:
-            exp_hist = float(history_record.get("expected_yield_kwh", 0.0))
-            act_hist = float(history_record.get("actual_yield_kwh", 0.0))
-            yesterday_soiling_loss_pct = SolarAPIClient.calculate_soiling_loss(exp_hist, act_hist) if exp_hist > 0 else 0.0
-            yesterday_daily_lost_thb = financial.revenue_lost_thb(exp_hist, act_hist, feed_in_tariff)
-        else:
-            yesterday_soiling_loss_pct = 0.0
-            yesterday_daily_lost_thb = 0.0
-        soiling_loss_pct = yesterday_soiling_loss_pct
-        daily_lost_thb = yesterday_daily_lost_thb
+        soiling_loss_pct = hist_soiling_loss
+        daily_lost_thb = hist_daily_lost_thb
+        daily_lost_kwh = capacity_kwp * 4.5 * 0.95 * (soiling_loss_pct / 100.0)
 
     soiling_loss_pct = round(soiling_loss_pct, 2)
     status = SolarAPIClient.get_soiling_status(soiling_loss_pct)

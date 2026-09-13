@@ -255,19 +255,34 @@ function buildSiteRow(t, yesterdayRecord, feedInTariff) {
   let dailyLostKwh = 0;
   let dailyLostThb = 0;
 
+  // Ground truth baseline from daily history
+  let histSoilingLoss = 0;
+  let histDailyLostThb = 0;
+  if (yesterdayRecord) {
+    const expHist = Number(yesterdayRecord.expected_yield_kwh || 0);
+    const actHist = Number(yesterdayRecord.actual_yield_kwh || 0);
+    histSoilingLoss = expHist > 0 ? Math.max(0.0, ((expHist - actHist) / expHist) * 100.0) : 0;
+    histDailyLostThb = Math.max(0, expHist - actHist) * feedInTariff;
+  }
+
+  // 7. Night Fallback Rule (According to Assignment: If irr < 150 W/m²: use yesterday's loss)
   if (irr >= 150.0 && capacityKwp > 0) {
     const expectedPvKw = capacityKwp * (irr / 1000.0) * 0.95;
-    soilingLossPct = expectedPvKw > 0 ? Math.max(0.0, ((expectedPvKw - pv) / expectedPvKw) * 100.0) : 0;
+    const instantLoss = expectedPvKw > 0 ? Math.max(0.0, ((expectedPvKw - pv) / expectedPvKw) * 100.0) : 0;
+    // Anti-jitter smoothing during low light / sunset (< 350 W/m²)
+    if (histSoilingLoss > 0 && irr < 350.0) {
+      soilingLossPct = 0.80 * histSoilingLoss + 0.20 * instantLoss;
+    } else if (histSoilingLoss > 0) {
+      soilingLossPct = 0.50 * histSoilingLoss + 0.50 * instantLoss;
+    } else {
+      soilingLossPct = instantLoss;
+    }
     dailyLostKwh = capacityKwp * 4.5 * 0.95 * (soilingLossPct / 100.0);
     dailyLostThb = dailyLostKwh * feedInTariff;
   } else {
-    if (yesterdayRecord) {
-      const expHist = Number(yesterdayRecord.expected_yield_kwh || 0);
-      const actHist = Number(yesterdayRecord.actual_yield_kwh || 0);
-      soilingLossPct = expHist > 0 ? Math.max(0.0, ((expHist - actHist) / expHist) * 100.0) : 0;
-      dailyLostKwh = Math.max(0, expHist - actHist);
-      dailyLostThb = dailyLostKwh * feedInTariff;
-    }
+    soilingLossPct = histSoilingLoss;
+    dailyLostThb = histDailyLostThb;
+    dailyLostKwh = capacityKwp * 4.5 * 0.95 * (soilingLossPct / 100.0);
   }
 
   soilingLossPct = Math.round(soilingLossPct * 10) / 10;

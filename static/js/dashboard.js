@@ -2013,11 +2013,36 @@ function updateSyncBadge(sync) {
   }
 }
 
+let isSyncingInProgress = false;
+let lastSyncTimestamp = 0;
+
 async function manualSync() {
-  const btn = $("#btnSyncNow");
-  const txt = $("#syncBtnText");
-  if (btn) btn.classList.add("syncing");
-  if (txt) txt.textContent = "กำลังซิงค์...";
+  const now = Date.now();
+  if (isSyncingInProgress) return;
+  if (now - lastSyncTimestamp < 2500) {
+    return; // Cooldown to prevent spam clicking
+  }
+
+  isSyncingInProgress = true;
+  lastSyncTimestamp = now;
+
+  const btnSync = $("#btnSyncNow");
+  const txtSync = $("#syncBtnText");
+  const btnRefresh = $("#btnRefresh");
+  const txtRefresh = $("#btnRefreshText");
+
+  if (btnSync) {
+    btnSync.classList.add("syncing");
+    btnSync.disabled = true;
+  }
+  if (txtSync) txtSync.textContent = "กำลังซิงค์...";
+
+  if (btnRefresh) {
+    btnRefresh.classList.add("syncing");
+    btnRefresh.disabled = true;
+  }
+  if (txtRefresh) txtRefresh.textContent = "กำลังรีเฟรช...";
+
   updateSyncBadge({ status: "syncing" });
   try {
     const res = await api("sync", { method: "POST" });
@@ -2027,8 +2052,19 @@ async function manualSync() {
     console.warn("Sync warning:", err);
     updateSyncBadge({ status: "warning" });
   } finally {
-    if (btn) btn.classList.remove("syncing");
-    if (txt) txt.textContent = "ซิงค์ข้อมูล";
+    setTimeout(() => {
+      isSyncingInProgress = false;
+      if (btnSync) {
+        btnSync.classList.remove("syncing");
+        btnSync.disabled = false;
+      }
+      if (txtSync) txtSync.textContent = "ซิงค์ข้อมูล";
+      if (btnRefresh) {
+        btnRefresh.classList.remove("syncing");
+        btnRefresh.disabled = false;
+      }
+      if (txtRefresh) txtRefresh.textContent = "รีเฟรชทันที";
+    }, 1200);
   }
 }
 
@@ -2409,8 +2445,14 @@ async function init() {
     }
   });
 
-  $("#btnRefresh").addEventListener("click", refreshFleet);
-  $("#btnRefreshTop").addEventListener("click", refreshFleet);
+  const btnRefresh = $("#btnRefresh");
+  if (btnRefresh) {
+    btnRefresh.addEventListener("click", manualSync);
+  }
+  const btnRefreshTop = $("#btnRefreshTop");
+  if (btnRefreshTop) {
+    btnRefreshTop.addEventListener("click", manualSync);
+  }
 
   // Quick Tariff & Site Cost Keydown Listeners
   const inputTariff = $("#inputFeedInTariff");

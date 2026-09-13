@@ -1399,6 +1399,12 @@ body.mode-showcase .btn-sync-now:hover {
   border-color: var(--scada-cyan) !important;
 }
 
+body.mode-showcase .btn-sync-now:disabled,
+body.mode-showcase .btn.syncing {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
 /* --------------------------------------------------------------------------
    GIS MAP RADAR VIEW STYLES (#view-gis)
    -------------------------------------------------------------------------- */
